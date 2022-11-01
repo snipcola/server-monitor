@@ -7,7 +7,7 @@ export default class App extends Component {
         <div>
             <Head>
                 <meta name='viewport' content='width=device-width,initial-scale=1' />
-                <title>Server Monitor - The best monitoring solution</title>
+                <title>TEMPORARY TEST</title>
             </Head>
 
             <Component {...pageProps} />
