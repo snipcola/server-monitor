@@ -1,0 +1,10 @@
+import styles from './error.module.sass';
+import Container from './container.mdx';
+import Layout from './layout.jsx';
+
+<Layout>
+    <Container containerClass={styles.error} contentClass={styles.content}>
+        <h1>{props.title}</h1>
+        <p>{props.description}</p>
+    </Container>
+</Layout>

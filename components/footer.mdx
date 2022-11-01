@@ -1,0 +1,26 @@
+import styles from './footer.module.sass';
+import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
+import { faDiscord as Discord, faTwitter as Twitter } from '@fortawesome/free-brands-svg-icons';
+import NextLink from 'next/link';
+import SiteLinks from '../lib/links.js';
+import Container from './container.mdx';
+
+export const Links = [
+    { icon: Discord, link: SiteLinks.discord },
+    { icon: Twitter, link: SiteLinks.twitter }
+];
+
+export const Link = ({ icon, link }) => (
+    <NextLink href={link ?? ''}>
+        <button className={styles.link}>
+            <Icon className={styles.icon} icon={icon} />
+        </button>
+    </NextLink>
+);
+
+<Container containerClass={styles.footer}>
+    <h1>@ 2022 Server Monitor. All rights reserved.</h1>
+    <div className={styles.links}>
+        {Links.map(Link)}
+    </div>
+</Container>

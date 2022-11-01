@@ -1,0 +1,7 @@
+import styles from './alert.module.sass';
+import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
+
+<div {...props} className={`${styles.alert} ${props.className ?? ''} ${props.variant ? styles[props.variant] : ''}`}>
+    {props.icon && <Icon className={styles.icon} icon={props.icon} />}
+    <p className={styles.text}>{props.label ?? ''}</p>
+</div>

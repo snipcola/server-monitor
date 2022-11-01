@@ -1,0 +1,272 @@
+@import '../../components/dashboard/variables'
+
+@media screen and (max-width: 1100px)
+    .filters
+        flex-direction: column !important
+
+        .filter
+            border-bottom: 1px solid darken($primary, 5%) !important
+            border-right: none !important
+
+            &:last-child
+                border-bottom: none !important
+    
+.button
+    background-color: lighten($primary, 10%) !important
+    color: lighten($primary, 50%) !important
+    outline: 1px solid darken($primary, 5%) !important
+
+    &:hover
+        background-color: lighten($primary, 15%) !important
+
+.buttons
+    display: flex !important
+
+    Button
+        margin-right: 1rem !important
+
+        &:last-child
+            margin-right: 0 !important
+
+    .createServerButton
+        background-color: darken($green, 40%) !important
+        color: lighten($green, 50%) !important
+        outline: 1px solid darken($green, 40%) !important
+
+        &:hover
+            background-color: darken($green, 45%) !important
+            
+.label
+    margin: 0 !important
+    color: lighten($primary, 50%) !important
+
+.input
+    background-color: lighten($primary, 7%) !important
+    border: 1px solid darken($primary, 5%) !important
+    color: lighten($primary, 50%) !important
+
+    &::placeholder
+        color: lighten($primary, 25%) !important
+
+    &:hover, &:focus
+        background-color: lighten($primary, 5%) !important
+
+.selectContainer, .inputContainer
+    margin-bottom: 1rem !important
+
+    .serverTypes
+        margin-top: 1rem !important
+        color: lighten($primary, 50%) !important
+        border-radius: $border-radius !important
+        outline: 1px solid darken($primary, 5%) !important
+        overflow: hidden !important
+
+        .serverType
+            display: flex !important
+            align-items: center !important
+            border-bottom: 1px solid darken($primary, 5%) !important
+            background-color: lighten($primary, 7.5%) !important
+
+            &.disabled
+                pointer-events: none !important
+                opacity: 50% !important
+
+            &.selected
+                background-color: lighten($primary, 15%) !important
+
+            &:hover
+                background-color: lighten($primary, 10%) !important
+                cursor: pointer !important
+
+            &:last-child
+                border-bottom: none !important
+
+            .iconContainer
+                display: flex !important
+                align-items: center !important
+                justify-content: center !important
+                height: 3rem !important
+                width: 3rem !important
+                border-right: 1px solid darken($primary, 5%) !important
+
+                .icon
+                    width: 1rem !important
+                    height: 1rem !important
+                    font-size: 1rem !important
+
+            .title
+                display: flex !important
+                align-items: center !important
+                justify-content: center !important
+                font-size: 1rem !important
+                padding: 0 1rem !important
+
+@media (max-width: 1700px)
+  .servers .container .server_list
+    grid-template-columns: repeat(3, 1fr) !important
+
+@media (max-width: 1400px)
+  .servers .container .server_list
+    grid-template-columns: repeat(2, 1fr) !important
+
+@media (max-width: 1200px)
+  .servers .container .server_list
+    grid-template-columns: 1fr !important
+
+    .server
+        max-width: 100% !important
+
+.deleteButton
+    background-color: darken($red, 15%) !important
+    color: lighten($red, 50%) !important
+    outline: 1px solid darken($red, 15%) !important
+
+    &:hover
+        background-color: darken($red, 20%) !important
+
+.editButton
+    background-color: darken($green, 40%) !important
+    color: lighten($green, 50%) !important
+    outline: 1px solid darken($green, 40%) !important
+
+    &:hover
+        background-color: darken($green, 45%) !important
+
+.servers
+    margin-top: 2.5rem !important
+
+    .container
+        .server_list
+            display: grid !important
+            grid-template-columns: repeat(4, 1fr)
+            grid-gap: 2rem !important
+
+            .server
+                background-color: lighten($primary, 7.5%) !important
+                border-radius: $border-radius !important
+                outline: 1px solid darken($primary, 5%) !important
+                max-width: 25rem
+                width: 100% !important
+
+                .buttons
+                    justify-content: space-between !important
+
+                .seperator
+                    width: 100% !important
+                    height: 1px !important
+                    background-color: darken($primary, 10%) !important
+                    opacity: 50% !important
+
+                .header
+                    padding: .5rem 0 !important
+                    display: flex !important
+                    justify-content: center !important
+                    align-items: center !important
+                    color: lighten($primary, 50%) !important
+                    font-weight: 500 !important
+                    font-size: 1.25rem !important
+
+                    .icon
+                        width: 1.25rem !important
+                        height: 1.25rem !important
+                        margin-right: 1rem !important
+
+                .content
+                    .list
+                        padding: 0 !important
+                        width: 100% !important
+                        background-color: lighten($primary, 5%) !important
+                        color: lighten($primary, 50%) !important
+                        border-radius: $border-radius !important
+                        overflow: hidden !important
+
+                        .data
+                            display: flex !important
+                            align-items: center !important
+                            justify-content: space-between !important
+                            padding: .5rem 1rem !important
+
+                            .value
+                                &.status
+                                    border-radius: $border-radius !important
+                                    padding: 0 .5rem !important
+                                    font-size: .9rem !important
+
+                                &.status.online
+                                    background-color: mix($green, $primary, 10%) !important
+                                    color: $green !important
+                                    outline: 1px solid $green !important
+
+                                &.status.offline
+                                    background-color: mix($red, $primary, 10%) !important
+                                    color: $red !important
+                                    outline: 1px solid $red !important
+
+                                &.status.pending
+                                    background-color: mix($orange, $primary, 10%) !important
+                                    color: $orange !important
+                                    outline: 1px solid $orange !important
+
+                            .label
+                                opacity: 75% !important
+
+                            &:nth-child(even)
+                                background-color: lighten($primary, 10%) !important
+
+                .content, .footer
+                    padding: 1rem 2rem !important
+
+        .title
+            color: lighten($primary, 50%) !important
+            font-weight: 500 !important
+            font-size: 1.5rem !important
+            margin-bottom: 2rem !important
+
+.filters
+    width: 100% !important
+    display: flex !important
+    color: lighten($primary, 50%) !important
+    border-radius: $border-radius !important
+    outline: 1px solid darken($primary, 5%) !important
+    overflow: hidden !important
+
+    .filter
+        display: flex !important
+        align-items: center !important
+        border-right: 1px solid darken($primary, 5%) !important
+        background-color: lighten($primary, 7.5%) !important
+        width: 100% !important
+        justify-content: center !important
+
+        &.disabled
+            pointer-events: none !important
+            opacity: 50% !important
+
+        &.selected
+            background-color: lighten($primary, 15%) !important
+
+        &:hover
+            background-color: lighten($primary, 10%) !important
+            cursor: pointer !important
+
+        &:last-child
+            border-right: none !important
+
+        .iconContainer
+            display: flex !important
+            align-items: center !important
+            justify-content: center !important
+            height: 3rem !important
+            width: 3rem !important
+
+            .icon
+                width: 1rem !important
+                height: 1rem !important
+                font-size: 1rem !important
+
+        .title
+            display: flex !important
+            align-items: center !important
+            justify-content: center !important
+            font-size: 1rem !important
+            padding: 0 1rem !important

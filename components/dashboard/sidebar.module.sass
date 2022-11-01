@@ -1,0 +1,84 @@
+@import './variables'
+
+@media screen and (max-width: 1100px)
+    .sidebar
+        display: none !important
+    
+.sidebar
+    width: 20rem !important
+    height: 100% !important
+    background-color: lighten($primary, 5%) !important
+    border-radius: $border-radius !important
+    outline: 1px solid darken($primary, 5%) !important
+
+    .title
+        padding: .5rem 2rem !important
+        color: lighten($primary, 50%) !important
+        font-weight: bold !important
+        font-size: 1.5rem !important
+
+    .seperator
+        width: 100% !important
+        height: 1px !important
+        background-color: darken($primary, 10%) !important
+        opacity: 50% !important
+
+    .links
+        padding: 1rem 2rem !important
+        display: flex !important
+        flex-direction: column !important
+        height: calc(100% - 4rem) !important
+        box-sizing: border-box !important
+        overflow-y: scroll !important
+        scroll-behavior: smooth !important
+
+        &::-webkit-scrollbar
+            border-left: 1px solid darken($primary, 5%) !important
+
+        &::-webkit-scrollbar-thumb
+            background-color: $primary !important
+
+        .logoutLink
+            display: flex !important
+            margin-top: auto !important
+
+        .link
+            align-items: center !important
+            height: 3.5rem !important
+            display: flex !important
+            background-color: lighten($primary, 3%) !important
+            margin-bottom: 1rem !important
+            border-radius: $border-radius !important
+            outline: 1px solid darken($primary, 5%) !important
+            text-decoration: none !important
+
+            &:hover:not(.active)
+                background-color: lighten($primary, 5%) !important
+                cursor: pointer !important
+
+            &.active
+                background-color: lighten($primary, 10%) !important
+            
+            .icon
+                color: lighten($primary, 50%) !important
+                padding: 1rem 2rem
+                font-size: 1.5rem
+                width: 1.25rem !important
+
+            .linkSeperator
+                height: 100% !important
+                width: 1px !important
+                background-color: darken($primary, 5%) !important
+
+            .label
+                color: lighten($primary, 50%) !important
+                font-weight: 900 !important
+                width: 100% !important
+                display: flex !important
+                justify-content: center !important
+                
+                h1
+                    font-size: 1.15rem !important
+
+            &:last-child
+                margin-bottom: 0 !important

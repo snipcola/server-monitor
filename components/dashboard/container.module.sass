@@ -1,0 +1,35 @@
+@import './variables.sass'
+
+@keyframes loadingAnimation
+    0%
+        margin-left: 0%
+    100%
+        margin-left: 100%
+
+.loading
+    overflow: hidden !important
+    position: absolute !important
+    width: 100% !important
+    height: .25rem !important
+    background-color: lighten($primary, 20%) !important
+
+    .bar
+        background-color: $primary !important
+        width: 25% !important
+        height: 100% !important
+        animation: loadingAnimation 2s infinite linear !important
+    
+.container
+    width: 100vw !important
+    height: 100% !important
+
+    .loadingText
+        display: flex !important
+        justify-content: center !important
+        align-items: center !important
+        color: white !important
+        height: 100vh !important
+        width: 100vw !important
+
+.content
+    padding: 1rem !important

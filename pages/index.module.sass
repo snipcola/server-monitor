@@ -1,0 +1,100 @@
+@import '../styles/variables'
+
+@keyframes pattern-animation
+  0%
+    background-position: 0 0
+  100%
+    background-position: 100% 50%
+    
+.one
+    background-image: $pattern
+    background-size: 125%
+    background-position: center center
+    animation: pattern-animation 60s linear infinite alternate
+    padding: 2rem 0
+    color: white
+
+    .left
+        margin-right: 1rem
+
+        .title
+            margin-bottom: .25rem
+
+        .description
+            opacity: 75%
+
+        .buttons
+            background-color: white
+            padding: 1rem
+            border-radius: $border-radius
+            margin-top: 5rem
+            display: flex
+
+            button
+                margin-right: 1rem
+                width: 100%
+
+                &:last-child
+                    margin-right: 0
+
+.two
+    padding: 2rem 0
+
+    .content
+        display: block !important
+
+        .title
+            margin-bottom: 1rem
+
+        .items
+            display: grid
+            grid-template-columns: repeat(auto-fit, minmax(10rem, 27.5rem))
+            gap: 1rem
+            justify-content: center
+            transition: all .1s
+
+            .item
+                border: 1px solid $primary
+                border-radius: $border-radius
+                padding: 1rem
+                color: $primary
+                background-color: mix($primary, white, 10%)
+
+                .title
+                    display: flex
+                    align-items: center
+
+                    .text
+                        font-size: 1.5rem
+                        margin-left: .5rem
+
+                    .icon
+                        background-color: $primary
+                        border-radius: $border-radius
+                        color: white
+                        padding: .5rem
+                        width: 1rem
+                        height: 1rem
+                        
+                        img
+                            font-size: 3rem
+
+@media (max-width: 1250px)
+    .one .content
+        display: block !important
+
+        .left
+            margin-right: 0 !important
+        
+        span
+            display: none !important
+
+        .image
+            display: none !important
+
+@media (max-width: 1000px)
+    .one .content .text
+        max-width: none !important
+
+    .two .content .items
+        grid-template-columns: 100% !important

@@ -1,0 +1,40 @@
+{
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.1.1",
+    "@fortawesome/free-brands-svg-icons": "^6.1.1",
+    "@fortawesome/free-solid-svg-icons": "^6.1.1",
+    "@fortawesome/react-fontawesome": "^0.2.0",
+    "@mdx-js/loader": "^2.1.2",
+    "@next/mdx": "^12.2.1",
+    "@sendgrid/mail": "^7.7.0",
+    "@types/styled-jsx": "^3.4.4",
+    "axios": "^0.27.2",
+    "cookies-next": "^2.1.1",
+    "crypto": "^1.0.1",
+    "ip-address-validator": "^1.0.7",
+    "micro": "^9.4.1",
+    "micro-cors": "^0.1.1",
+    "moment": "^2.29.4",
+    "mysql2": "^2.3.3",
+    "next": "^12.2.1",
+    "next-plugin-preact": "^3.0.7",
+    "node-sass-middleware": "^1.0.1",
+    "preact": "^10.9.0",
+    "preact-render-to-string": "^5.2.0",
+    "public-ip": "^6.0.1",
+    "react": "npm:@preact/compat",
+    "react-dom": "npm:@preact/compat",
+    "react-google-recaptcha": "^2.1.0",
+    "react-ssr-prepass": "npm:preact-ssr-prepass",
+    "sass": "^1.55.0",
+    "styled-jsx": "^5.0.7",
+    "styled-jsx-plugin-sass": "^1.0.0"
+  },
+  "devDependencies": {}
+}

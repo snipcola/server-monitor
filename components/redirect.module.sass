@@ -1,0 +1,22 @@
+@import '../styles/variables'
+
+@keyframes pattern-animation
+  0%
+    background-position: 0 0
+  100%
+    background-position: 100% 50%
+    
+.redirect
+  background-image: $pattern
+  background-size: 125%
+  background-position: center center
+  animation: pattern-animation 60s linear infinite alternate
+  padding: 3.5rem 0
+  color: white
+
+  .link
+    text-decoration: underline
+    color: white
+
+  .content
+    display: block !important

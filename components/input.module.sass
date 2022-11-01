@@ -1,0 +1,28 @@
+@import '../styles/variables'
+    
+.input
+    width: calc(100% - 2rem)
+    height: 1.5rem
+    border-radius: $border-radius
+    border: none
+    outline: none
+    border: 1px solid silver
+    padding: .25rem 1rem
+    transition: .1s all
+
+    &:disabled
+        pointer-events: none
+        opacity: 75%
+
+    &:hover, &:active, &:focus
+        color: $primary
+
+        &::placeholder
+            color: $primary
+
+    &:hover
+        background-color: mix($primary, white, 30%)
+
+    &:active, &:focus
+        border-color: $primary
+        background-color: mix($primary, white, 50%)

@@ -1,0 +1,58 @@
+@import '../styles/variables'
+    
+.button
+    border: none
+    outline: none
+    background-color: transparent
+    border-radius: $border-radius
+    font-weight: 300
+    transition: .1s all
+    cursor: pointer
+    border: 1px solid transparent
+    display: flex
+    align-items: center
+    justify-content: center
+    padding: 0.6rem 1.6rem
+
+    &:disabled
+        pointer-events: none
+        opacity: 75%
+
+    .icon, .iconRight
+        font-size: .75rem
+        width: .75rem
+        height: .75rem
+
+        &.noMargin
+            margin-left: 0 !important
+            margin-right: 0 !important
+
+    .icon
+        margin-right: 10px
+
+    .iconRight
+        margin-left: 10px
+
+    &.outline, &.text
+        &:hover, &:active, &:focus
+            color: $primary
+
+        &:hover
+            background-color: mix($primary, white, 30%)
+
+        &:active, &:focus
+            background-color: mix($primary, white, 50%)
+
+    &.outline
+        border: 1px solid $primary
+        color: $primary
+
+    &.primary
+        background-color: $primary
+        color: white
+
+        &:hover
+            background-color: mix($primary, black, 60%)
+
+        &:active, &:focus
+            background-color: mix($primary, black, 40%)

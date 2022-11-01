@@ -1,0 +1,167 @@
+@import '../../components/dashboard/variables'
+
+@media screen and (max-width: 1500px)
+    .plans
+        flex-direction: column !important
+        justify-content: center !important
+        padding: 0 !important
+
+        .plan
+            min-width: 100% !important
+            margin-bottom: 2rem !important
+
+            &:last-child
+                margin-bottom: 0 !important
+
+            &.featured
+                transform: none !important
+
+.title
+    padding: .5rem 2rem !important
+    color: lighten($primary, 50%) !important
+    font-weight: bold !important
+    font-size: 1.5rem !important
+
+.content
+    padding: 1.5rem 2rem !important
+    box-sizing: border-box !important
+
+.seperator
+    width: 100% !important
+    height: 1px !important
+    background-color: darken($primary, 10%) !important
+    opacity: 50% !important
+
+.header
+    margin: 0 !important
+    color: lighten($primary, 50%) !important
+    font-weight: 300 !important
+    font-size: 1.5rem !important
+
+.keys
+    background-color: lighten($primary, 7.5%) !important
+    border-radius: $border-radius !important
+    outline: 1px solid darken($primary, 5%) !important
+
+    .list
+        padding: 0 !important
+        width: 100% !important
+        background-color: lighten($primary, 7.5%) !important
+        color: lighten($primary, 50%) !important
+        border-radius: 0 0 $border-radius $border-radius !important
+        overflow: hidden !important
+
+        .key
+            display: flex !important
+            padding: .1rem 1rem !important
+
+            .plan
+                opacity: 50% !important
+                max-width: 6rem !important
+                width: 100% !important
+
+            .label
+                color: lighten($primary, 50%) !important
+                font-weight: 400 !important
+
+            &:nth-child(even)
+                background-color: lighten($primary, 3.75%) !important
+
+.plansContainer
+    margin-top: 2rem !important
+
+    .plans
+        display: flex !important
+        width: 100% !important
+        justify-content: center !important
+        margin-top: 1rem !important
+
+        .plan
+            max-width: 35% !important
+            width: 100% !important
+            background-color: lighten($primary, 7.5%) !important
+            border-radius: $border-radius !important
+            outline: 1px solid darken($primary, 5%) !important
+
+            &:not(.featured)
+                transition: opacity .15s !important
+                opacity: 75% !important
+
+                &:hover
+                    background-color: lighten($primary, 8%) !important
+                    opacity: 100% !important
+
+            &.featured
+                background-color: lighten($primary, 10%) !important
+                transform: scale(1.05)
+                z-index: 9 !important
+
+            .title
+                display: flex !important
+                justify-content: center !important
+                align-items: center !important
+
+                .featured
+                    margin-left: 1rem !important
+                    font-size: .95rem !important
+                    font-weight: bold !important
+                    background-color: mix($green, $primary, 10%) !important
+                    color: $green !important
+                    outline: 1px solid $green !important
+                    border-radius: $border-radius !important
+                    padding: 0 1rem !important
+
+            .features
+                padding: 0 !important
+                width: 100% !important
+                background-color: lighten($primary, 12.5%) !important
+                color: lighten($primary, 50%) !important
+                border-radius: $border-radius !important
+                overflow: hidden !important
+
+                .feature
+                    display: flex !important
+                    align-items: center !important
+                    padding: .1rem 1rem !important
+
+                    .icon
+                        margin-right: 1rem !important
+                        font-size: .65rem !important
+                        width: .65rem !important
+                        height: .65rem !important
+                        background-color: mix($red, $primary, 10%) !important
+                        color: $red !important
+                        outline: 1px solid $red !important
+                        border-radius: 5rem !important
+                        padding: .25rem !important
+
+                        &.included
+                            background-color: mix($green, $primary, 10%) !important
+                            color: $green !important
+                            outline: 1px solid $green !important
+
+                    &:nth-child(even)
+                        background-color: lighten($primary, 8.5%) !important
+
+        .bottom
+            display: flex !important
+            margin-top: 1.5rem !important
+
+            .price
+                color: lighten($primary, 50%) !important
+
+                .perMonth
+                    font-size: 1rem !important
+                    opacity: 50%
+
+            .button
+                margin-left: auto !important
+                background-color: lighten($primary, 15%) !important
+                color: lighten($primary, 50%) !important
+                outline: 1px solid lighten($primary, 30%) !important
+
+                &:hover
+                    background-color: lighten($primary, 20%) !important
+
+.alert
+    margin-top: 2rem !important

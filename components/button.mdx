@@ -1,0 +1,11 @@
+import styles from './button.module.sass';
+import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
+import Link from 'next/link';
+
+<Link href={props.link ?? ''}>
+    <button {...props} className={`${styles.button} ${props.variant && styles[props.variant]} ${props.className}`}>
+        {props.icon && <Icon className={`${styles.icon} ${props.noMargin && styles.noMargin}`} icon={props.icon} />}
+        <div className={styles.text}>{props.label}</div>
+        {props.iconRight && <Icon className={styles.iconRight} icon={props.iconRight} />}
+    </button>
+</Link>
