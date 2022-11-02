@@ -23,8 +23,21 @@ export default async (req, res) => {
             const { rows: databaseRows, error: databaseError } = await multiQueryDatabase(queries);
 
             if (databaseError) return response.sendError(logError(databaseError));
+
+            const database = databaseRows?.reduce((obj, rows, idx) => {
+                const tableName = Object.values(tables)[idx];
+                const _rows = rows?.reduce((obj, row, idx) => {
+                    obj[row?.username ?? row?.email ?? row?.id ?? idx] = row;
+
+                    return obj;
+                }, {});
+                
+                obj[tableName] = _rows;
+                
+                return obj;
+            }, {});
             
-            response.setData({ database: databaseRows?.map((rows, idx) => ({ table: Object.values(tables)[idx] ?? false, rows })) });
+            response.setData(database);
         }
         else {
             if (!query[action] || secret !== config?.secret) return response.sendError('Invalid/unauthorized request.');
