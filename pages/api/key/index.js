@@ -15,7 +15,7 @@ export default async (req, res) => {
     switch (method) {
         case 'DELETE': {
             const auth_token = getCookie('auth_token', { req, res }) ?? '';
-            const { key } = req?.body;
+            const { key } = JSON.parse(req?.body);
 
             if (!auth_token || !key) return response.sendError('Invalid request.'); 
 

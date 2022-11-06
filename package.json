@@ -14,7 +14,6 @@
     "@next/mdx": "^12.2.1",
     "@sendgrid/mail": "^7.7.0",
     "@types/styled-jsx": "^3.4.4",
-    "axios": "^0.27.2",
     "cookies-next": "^2.1.1",
     "crypto": "^1.0.1",
     "ip-address-validator": "^1.0.7",

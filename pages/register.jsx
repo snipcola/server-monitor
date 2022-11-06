@@ -11,13 +11,13 @@ import NextLink from 'next/link';
 import Captcha from 'react-google-recaptcha';
 import Router from 'next/router';
 import { publicIpv4 as IPV4 } from 'public-ip';
-import axios from 'axios';
+import { apiRequest, setUser } from '../lib/functions';
 
 export default class extends Component {
     state = {
         visible: false,
         ip: '',
-        loading: false,
+        elementsDisabled: false,
         userData: {
             email: '',
             username: '',
@@ -27,11 +27,10 @@ export default class extends Component {
         registered: false
     };
 
-    componentDidMount = () => axios.get('/api/user')
-        .then((r) => r?.data?.data?.user
-            ? Router.push(Links.dashboard.settings)
-            : this.setState({ visible: true }))
-        .catch(() => this.setState({ visible: true }));
+    componentDidMount = () => setUser((a) => this.setState(a), null, null, (u) => {
+        if (u) Router.push(Links.dashboard.settings);
+        else this.setState({ visible: true });
+    });
 
     render = () => {
         const captchaRef = createRef();
@@ -40,23 +39,14 @@ export default class extends Component {
 
         const submit = async (e) => {
             e.preventDefault();
-    
-            this.setState({ registered: false });
-            this.setState({ loading: true });
-            
-            axios.post(Links.api.emailVerification, { ...this.state.userData, ip: this.state.ip, captcha: captchaRef.current?.getValue() })
-                .then((res) => {
-                    if (!res?.data?.data?.success || res.data?.errors?.length > 0) this.setState({ errors: res.data.errors });
-                    else {
-                        this.setState({ errors: [] });
-                        this.setState({ registered: true });
-    
-                        Router.push(`${Links.verifyEmail}?email=${this.state?.userData?.email}`);
-                    };
-    
-                    this.setState({ loading: false });
-                })
-                .catch(() => this.setState({ loading: false }) && this.setState({ errors: [`API error, please try again.`] }));
+
+            apiRequest(Links.api.emailVerification, 'POST', {
+                ...this.state.userData,
+                captcha: captchaRef.current?.getValue(),
+                ip: this.state.ip
+            }, (a) => this.setState(a), 'registered', ({ success }) => {
+                if (success) Router.push(`${Links.verifyEmail}?email=${this.state?.userData?.email}`)
+            });
     
             captchaRef.current?.reset();
         };
@@ -68,20 +58,20 @@ export default class extends Component {
         };
 
         return (
-            <Layout loading={this.state.loading}>
+            <Layout>
                 {this.state.visible ? (
                     <Container containerClass={loginStyles.container} contentClass={loginStyles.content}>
                         <div className={loginStyles.title}>
                             <h1 className={loginStyles.text}>Register</h1>
                             <p className={loginStyles.description}>Register a Server Monitor account.</p>
                         </div>
-                        <Input className={loginStyles.input} name='email' onChange={change} placeholder='Email address' type='email' />
-                        <Input className={loginStyles.input} name='username' onChange={change} placeholder='Username' type='text' />
-                        <Input className={loginStyles.input} name='password' onChange={change} placeholder='Password' type='password' />
+                        <Input className={loginStyles.input} name='email' onChange={change} placeholder='Email address' type='email' disabled={this.state.elementsDisabled} />
+                        <Input className={loginStyles.input} name='username' onChange={change} placeholder='Username' type='text' disabled={this.state.elementsDisabled} />
+                        <Input className={loginStyles.input} name='password' onChange={change} placeholder='Password' type='password' disabled={this.state.elementsDisabled} />
                         <Captcha className={loginStyles.captcha} ref={captchaRef} sitekey={`6LeJsxAiAAAAAM1g0-bOndBDAkaEs5VYYxnxx2Ep`} />
                         <div className={loginStyles.buttons}>
-                            <Button onClick={submit} label='Register' variant='primary' />
-                            <Button label='Login' variant='outline' link={Links.login} />
+                            <Button onClick={submit} label='Register' variant='primary' disabled={this.state.elementsDisabled} />
+                            <Button label='Login' variant='outline' link={Links.login} disabled={this.state.elementsDisabled} />
                         </div>
                         <Alert style={{ display: this.state.errors.length == 0 ? 'none' : 'flex' }} variant='danger' icon={Error} label={(
                             <p>

@@ -6,6 +6,7 @@ import { faServer as Server, faCog as Gear, faMoneyBill as MoneyBill, faPapercli
 import links from '../../lib/links.js';
 import axios from 'axios';
 import Router, { useRouter } from 'next/router';
+import { logout } from '../../lib/functions';
 
 export const Links = [
     {
@@ -44,9 +45,7 @@ export const Link = ({ label, link, icon, className, onClick }) => {
     );
 };
 
-export const Logout = () => axios.post('/api/user/logout')
-    .then(() => Router?.push(links.login))
-    .catch(() => Router?.push(links.login));
+export const Logout = () => logout(Router);
 
 <div className={styles.sidebar}>
     <h1 className={styles.title}>DASHBOARD</h1>

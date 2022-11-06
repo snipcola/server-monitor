@@ -10,6 +10,7 @@ import { faCircleExclamation as Error, faCheckCircle as Check, faCheck as CheckA
 import Modal from '../../components/dashboard/modal.jsx';
 import Captcha from 'react-google-recaptcha';
 import Links from '../../lib/links';
+import { apiRequest, setUser, logout } from '../../lib/functions';
 
 export default class extends Component {
     defaultChangePasswordModal = {
@@ -19,14 +20,16 @@ export default class extends Component {
         },
         visible: false,
         errors: [],
-        changed: false
+        changed: false,
+        elementsDisabled: false
     };
 
     defaultDeleteAccountModal = {
         visible: false,
         errors: [],
         deleted: false,
-        deleteCounter: 3
+        deleteCounter: 3,
+        elementsDisabled: false
     };
 
     state = {
@@ -42,32 +45,15 @@ export default class extends Component {
         deleteAccountModal: this.defaultDeleteAccountModal
     };
 
-    componentDidMount = () => axios.get('/api/user')
-        .then((r) => r?.data?.data?.user
-            ? this.setState({ user: r?.data?.data?.user, userData: { username: r?.data?.data?.user?.username } })
-            : Router.push(Links.login))
-        .catch(() => Router.push(Links.login));
+    componentDidMount = () => setUser((a) => this.setState(a), Router, Links.login, ({ username }) => this.setState({ userData: { username } }));
 
     render = () => {
         const changePassCaptchaRef = createRef();
 
-        const Logout = () => axios.post('/api/user/logout')
-            .then(() => Router.push(Links.login))
-            .catch(() => Router.push(Links.login));
-
         const submit = (e) => {
             e.preventDefault();
     
-            this.setState({ elementsDisabled: true, updated: false });
-    
-            axios.put('/api/user', { ...this.state.userData })
-                .then((res) => {
-                    if (!res.data?.data?.success || res.data?.errors?.length > 0) this.setState({ errors: res.data.errors });
-                    else this.setState({ errors: [], updated: true });
-    
-                    this.setState({ elementsDisabled: false });
-                })
-                .catch(() => this.setState({ elementsDisabled: false, errors: ['API error, try again.'] }));
+            apiRequest(Links.api.user.default, 'PUT', { ...this.state.userData }, (a) => this.setState(a), 'updated');
         };
 
         const setDeleteCounter = (val) => this.setState({ deleteAccountModal: { ...this.state.deleteAccountModal, deleteCounter: val } });
@@ -75,19 +61,10 @@ export default class extends Component {
         const submitDeleteAccount = (e) => {
             e.preventDefault();
     
-            this.setState({ elementsDisabled: true, deleteAccountModal: { ...this.state.deleteAccountModal, errors: [], deleted: false } });
-    
-            axios.delete('/api/user')
-                .then((res) => {
-                    if (!res.data?.data?.success || res.data?.errors?.length > 0) this.setState({ deleteAccountModal: { ...this.state.deleteAccountModal, errors: res.data.errors } });
-                    else {
-                        this.setState({ deleteAccountModal: { ...this.state.deleteAccountModal, errors: [], deleted: true } });
-                        Router.push(Links.login);
-                    };
-    
-                    this.setState({ elementsDisabled: false })
-                })
-                .catch(() => this.setState({ elementsDisabled: false, deleteAccountModal: { ...this.state.deleteAccountModal, errors: ['API error, try again.'] } }));
+            apiRequest(Links.api.user.default, 'DELETE', null, (a) => this.setState({ deleteAccountModal: {
+                ...this.state.deleteAccountModal,
+                ...a
+            } }), 'deleted', () => Router.push(Links.login));
         };
 
         const handleDeleteAccount = (e) => {
@@ -101,19 +78,13 @@ export default class extends Component {
         const submitChangePassword = (e) => {
             e.preventDefault();
     
-            this.setState({ elementsDisabled: true, changePasswordModal: { ...this.state.changePasswordModal, changed: false } });
-    
-            axios.put('/api/user', { ...this.state.changePasswordModal?.data, captcha: changePassCaptchaRef.current?.getValue() })
-                .then((res) => {
-                    if (!res.data?.data?.success || res.data?.errors?.length > 0) this.setState({ changePasswordModal: { ...this.state.changePasswordModal, errors: res.data.errors } });
-                    else {
-                        this.setState({ changePasswordModal: { ...this.state.changePasswordModal, errors: [], changed: true } });
-                        Logout();
-                    };
-    
-                    this.setState({ elementsDisabled: false })
-                })
-                .catch(() => this.setState({ elementsDisabled: false, changePasswordModal: { ...this.state.changePasswordModal, errors: ['API error, try again.'] } }));
+            apiRequest(Links.api.user.default, 'PUT', {
+                ...this.state.changePasswordModal?.data,
+                captcha: changePassCaptchaRef.current?.getValue()
+            }, (a) => this.setState({ changePasswordModal: {
+                ...this.state.changePasswordModal,
+                ...a
+            } }), 'changed', () => logout(Router), true);
 
             changePassCaptchaRef.current?.reset();
         };
@@ -146,25 +117,25 @@ export default class extends Component {
                 )}>
                     <div className={styles.inputContainer}>
                         <label className={styles.label}>Current Password</label>
-                        <Input className={styles.input} onChange={changeChangePassword} value={this.state.changePasswordModal?.data?.current_password} name='current_password' type='password' disabled={this.state.elementsDisabled} />
+                        <Input className={styles.input} onChange={changeChangePassword} value={this.state.changePasswordModal?.data?.current_password} name='current_password' type='password' disabled={this.state.changePasswordModal?.elementsDisabled} />
                     </div>
                     <div className={styles.inputContainer}>
                         <label className={styles.label}>Desired Password</label>
-                        <Input className={styles.input} onChange={changeChangePassword} value={this.state.changePasswordModal?.data?.desired_password} name='desired_password' type='password' disabled={this.state.elementsDisabled} />
+                        <Input className={styles.input} onChange={changeChangePassword} value={this.state.changePasswordModal?.data?.desired_password} name='desired_password' type='password' disabled={this.state.changePasswordModal?.elementsDisabled} />
                     </div>
                     <Captcha ref={changePassCaptchaRef} theme='dark' sitekey={`6LeJsxAiAAAAAM1g0-bOndBDAkaEs5VYYxnxx2Ep`} />
                     <Alert style={{ display: this.state.changePasswordModal.errors.length == 0 ? 'none' : 'flex' }} variant='danger' icon={Error} label={(
                         <p>
                             The following errors occured:
-                            {this.state.changePasswordModal.errors.map((e) => <li>{e}</li>)}
+                            {this.state.changePasswordModal?.errors.map((e) => <li>{e}</li>)}
                         </p>
                     )} className={styles.alert} />
                     <Alert style={{ display: this.state.changePasswordModal.changed ? 'flex' : 'none' }} variant='success' icon={Check} label={(<p>You've successfully changed your password.</p>)} className={styles.alert} />
                 </Modal>
                 <Modal show={this.state.deleteAccountModal.visible} title='ARE YOU SURE?' footer={(
                     <div className={styles.buttons}>
-                        <Button className={styles.deleteButton} onClick={handleDeleteAccount} label={`Delete${this.state.deleteAccountModal?.deleteCounter > 0 ? ` (${this.state.deleteAccountModal?.deleteCounter})` : ''}`} disabled={this.state.elementsDisabled} />
-                        <Button className={styles.button} onClick={hideDeleteAccount} label='Close' disabled={this.state.elementsDisabled} />
+                        <Button className={styles.deleteButton} onClick={handleDeleteAccount} label={`Delete${this.state.deleteAccountModal?.deleteCounter > 0 ? ` (${this.state.deleteAccountModal?.deleteCounter})` : ''}`} disabled={this.state.deleteAccountModal?.elementsDisabled} />
+                        <Button className={styles.button} onClick={hideDeleteAccount} label='Close' disabled={this.state.deleteAccountModal?.elementsDisabled} />
                     </div>
                 )}>
                     <div className={styles.inputContainer}>

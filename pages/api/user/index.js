@@ -49,7 +49,7 @@ export default async (req, res) => {
         
         case 'PUT': {
             const auth_token = getCookie('auth_token', { req, res }) ?? '';
-            const { username, current_password, desired_password, captcha, plan } = req?.body;
+            const { username, current_password, desired_password, captcha, plan } = JSON.parse(req?.body);
 
             if (!auth_token || !(username || plan || (current_password && desired_password))) return response.sendError('Invalid request.'); 
 

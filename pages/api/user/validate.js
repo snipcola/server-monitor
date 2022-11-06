@@ -12,7 +12,7 @@ export default async (req, res) => {
     response.setResponse(res);
 
     if (req?.method === 'POST') {
-        const { email, password, captcha } = req?.body;
+        const { email, password, captcha } = JSON.parse(req?.body);
 
         if (!(email && password)) return response.sendError('Invalid request.'); 
         if (!await validateCaptcha(captcha)) return response.sendError('Invalid captcha.');

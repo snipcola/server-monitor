@@ -5,11 +5,11 @@ import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faCircleExclamation as Error, faCheck as Check, faXmark as Cross } from '@fortawesome/free-solid-svg-icons';
 import Button from '../../components/button.mdx';
 import Alert from '../../components/alert.mdx';
-import axios from 'axios';
 import Router from 'next/router';
 import Links from '../../lib/links';
 import Head from 'next/head';
 import moment from 'moment/moment';
+import { apiRequest, setUser } from '../../lib/functions';
 
 export default class extends Component {
     state = {
@@ -20,11 +20,7 @@ export default class extends Component {
         elementsDisabled: false,
     };
 
-    componentDidMount = () => axios.get('/api/user')
-        .then((r) => r?.data?.data?.user
-            ? this.setState({ user: r?.data?.data?.user })
-            : Router.push(Links.login))
-        .catch(() => Router.push(Links.login));
+    componentDidMount = () => setUser((a) => this.setState(a), Router, Links.login);
 
     render = () => {
         const GetPlanTime = (expiry) => moment(expiry).diff(moment(), 'days') ?? 0;
@@ -95,24 +91,7 @@ export default class extends Component {
 
         const Subscription = this.state.user?.subscription?.toUpperCase();
 
-        const submit = (plan) => {
-            this.setState({ switched: false });
-            this.setState({ elementsDisabled: true });
-    
-            axios.put('/api/user', { plan })
-                .then((res) => {
-                    if (!res.data?.data?.success || res.data?.errors?.length > 0) this.setState({ errors: res.data.errors });
-                    else {
-                        this.setState({ errors: [] });
-                        this.setState({ switched: true });
-
-                        Router.reload();
-                    };
-    
-                    this.setState({ elementsDisabled: false })
-                })
-                .catch(() => this.setState({ elementsDisabled: false }) && this.setState({ errors: ['API error, try again.'] }));
-        };
+        const submit = (plan) => apiRequest(Links.api.user.default, 'PUT', { plan }, (a) => this.setState(a), 'switched', Router.reload);
 
         const Plan = ({ label, features, price, featured, sellixConfig, expiry }) => (
             <div className={`${styles.plan} ${featured ? styles.featured : ''}`}>

@@ -1,4 +1,4 @@
-export default async (req, res) => res.send('Soon to be removed due to API 2.');
+export default async (_, res) => res.send('Soon to be removed due to API 2.');
 
 /* const { ApolloServer, gql } = require('apollo-server-micro');
 const { ApolloServerPluginLandingPageDisabled } = require('apollo-server-core');

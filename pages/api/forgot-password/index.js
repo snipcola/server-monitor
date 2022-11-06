@@ -27,9 +27,9 @@ export default async (req, res) => {
 
     switch (method) {
         case 'POST': {
-            const { email, captcha, ip } = req?.body;
+            const { email, captcha, ip } = JSON.parse(req?.body);
 
-            if (!(email && ip)) return response.sendError('Invalid request.'); 
+            if (!(email && ip)) return response.sendError('Invalid request.');
             if (!await validateCaptcha(captcha)) return response.sendError('Invalid captcha.');
             if (!isIPAddress(ip)) return response.sendError('Invalid IP Address.');
             
@@ -65,9 +65,9 @@ export default async (req, res) => {
         };
 
         case 'DELETE': {
-            const { email, password, captcha, code, ip } = req?.body;
+            const { email, password, captcha, code, ip } = JSON.parse(req?.body);
 
-            if (!(email && password && code && ip)) return response.sendError('Invalid request.'); 
+            if (!(email && password && code && ip)) return response.sendError('Invalid request.');
             if (!await validateCaptcha(captcha)) return response.sendError('Invalid captcha.');
             if (!isIPAddress(ip)) return response.sendError('Invalid IP Address.');
             

@@ -6,77 +6,93 @@ import Input from '../components/input.mdx';
 import Button from '../components/button.mdx';
 import { faCircleExclamation as Error, faCheckCircle as Check } from '@fortawesome/free-solid-svg-icons';
 import Links from '../lib/links.js';
-import { useState, createRef, useEffect } from 'react';
+import { Component, createRef, useEffect } from 'react';
 import NextLink from 'next/link';
 import Captcha from 'react-google-recaptcha';
 import { useRouter } from 'next/router';
 import { publicIpv4 as IPV4 } from 'public-ip';
-import axios from 'axios';
+import { apiRequest, setUser } from '../lib/functions';
 
-export default () => {
-    const [ip, setIp] = useState('');
-    const router = useRouter();
-    const [loading, setLoading] = useState(false);
-    const [userData, setUserData] = useState({
-        email: '',
-        code: ''
+export default class extends Component {
+    state = {
+        visible: false,
+        ip: '',
+        elementsDisabled: false,
+        userData: {
+            email: '',
+            code: ''
+        },
+        errors: [],
+        validated: false
+    };
+
+    componentDidMount = () => setUser((a) => this.setState(a), null, null, (u) => {
+        if (u) Router.push(Links.dashboard.settings);
+        else this.setState({ visible: true });
     });
-    const [errors, setErrors] = useState([]);
-    const [validated, setValidated] = useState(false);
-    const captchaRef = createRef();
+    
+    render = () => {
+        const router = useRouter();
+        const captchaRef = createRef();
 
-    useEffect(() => router.isReady && setUserData({ email: router.query.email ?? '', code: router.query.code ?? '' }), [router, setUserData]);
-    useEffect(async () => setIp(await IPV4()), []);
+        useEffect(async () => router.isReady && this.setState({
+            userData: {
+                email: router.query.email ?? '',
+                code: router.query.code ?? ''
+            },
+            ip: await IPV4()
+        }), [router]);
 
-    const submit = async (e) => {
-        e.preventDefault();
+        const submit = async (e) => {
+            e.preventDefault();
+            
+            apiRequest(Links.api.emailVerification, 'DELETE', {
+                ...this.state.userData,
+                captcha: captchaRef.current?.getValue(),
+                ip: this.state.ip
+            }, (a) => this.setState(a), 'validated');
 
-        setValidated(false);
-        setLoading(true);
+            captchaRef.current?.reset();
+        };
 
-        axios.delete(Links.api.emailVerification, { data: { ...userData, captcha: captchaRef.current?.getValue(), ip } })
-            .then((res) => {
-                if (!res.data?.data?.success || res.data?.errors?.length > 0) setErrors(res.data.errors);
-                else {
-                    setErrors([]);
-                    setValidated(true);
-                };
+        const change = (e) => {
+            const { name, value } = e.target;
 
-                setLoading(false);
-            })
-            .catch(() => setLoading(false) && setErrors([`API error, please try again.`]));
+            this.setState({ userData: {
+                ...this.state.userData,
+                [name]: value
+            }});
+        };
 
-        captchaRef.current?.reset();
+        return (
+            <Layout>
+                {this.state.visible ? (
+                    <Container containerClass={loginStyles.container} contentClass={loginStyles.content}>
+                        <div className={loginStyles.title}>
+                            <h1 className={loginStyles.text}>Email Verification</h1>
+                            <p className={loginStyles.description}>Check your email (including the spam folder) as we've sent you a 6 digit code that you'll need.</p>
+                        </div>
+                        <Input className={loginStyles.input} value={this.state.userData?.email} name='email' onChange={change} placeholder='Email address' type='email' disabled={this.elementsDisabled} />
+                        <Input className={loginStyles.input} value={this.state.userData?.code} name='code' onChange={change} placeholder='Six digit code (123-456)' type='text' disabled={this.elementsDisabled} />
+                        <Captcha className={loginStyles.captcha} ref={captchaRef} sitekey={`6LeJsxAiAAAAAM1g0-bOndBDAkaEs5VYYxnxx2Ep`} />
+                        <div className={loginStyles.buttons}>
+                            <Button onClick={submit} label='Verify' variant='primary' disabled={this.elementsDisabled} />
+                            <Button label='Login' variant='outline' link={Links.login} disabled={this.elementsDisabled} />
+                        </div>
+                        <Alert style={{ display: this.state.errors?.length == 0 ? 'none' : 'flex' }} variant='danger' icon={Error} label={(
+                            <p>
+                                The following errors occured:
+                                {this.state.errors?.map((e) => <li>{e}</li>)}
+                            </p>
+                        )} className={loginStyles.alert} />
+                        <Alert style={{ display: this.state.validated ? 'flex' : 'none' }} variant='success' icon={Check} label={(<p>You've successfully verified your email, click <NextLink href={Links.login}><a className={loginStyles.link}>here</a></NextLink> to login.</p>)} className={loginStyles.alert} />
+                    </Container>
+                ) : (
+                    <Container containerClass={loginStyles.container} contentClass={loginStyles.content}>
+                        <p>Authenticating...</p>
+                    </Container>
+                )}
+            </Layout>
+        );
     };
-
-    const change = (e) => {
-        const { name, value } = e.target;
-
-        setUserData({ ...userData, [name]: value });
-    };
-
-    return (
-        <Layout loading={loading}>
-            <Container containerClass={loginStyles.container} contentClass={loginStyles.content}>
-                <div className={loginStyles.title}>
-                    <h1 className={loginStyles.text}>Email Verification</h1>
-                    <p className={loginStyles.description}>Check your email (including the spam folder) as we've sent you a 6 digit code that you'll need.</p>
-                </div>
-                <Input className={loginStyles.input} value={userData.email} name='email' onChange={change} placeholder='Email address' type='email' />
-                <Input className={loginStyles.input} value={userData.code} name='code' onChange={change} placeholder='Six digit code (123-456)' type='text' />
-                <Captcha className={loginStyles.captcha} ref={captchaRef} sitekey={`6LeJsxAiAAAAAM1g0-bOndBDAkaEs5VYYxnxx2Ep`} />
-                <div className={loginStyles.buttons}>
-                    <Button onClick={submit} label='Verify' variant='primary' />
-                    <Button label='Login' variant='outline' link={Links.login} />
-                </div>
-                <Alert style={{ display: errors.length == 0 ? 'none' : 'flex' }} variant='danger' icon={Error} label={(
-                    <p>
-                        The following errors occured:
-                        {errors.map((e) => <li>{e}</li>)}
-                    </p>
-                )} className={loginStyles.alert} />
-                <Alert style={{ display: validated ? 'flex' : 'none' }} variant='success' icon={Check} label={(<p>You've successfully verified your email, click <NextLink href={Links.login}><a className={loginStyles.link}>here</a></NextLink> to login.</p>)} className={loginStyles.alert} />
-            </Container>
-        </Layout>
-    );
 };

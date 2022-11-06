@@ -30,7 +30,7 @@ export default async (req, res) => {
 
     switch (method) {
         case 'POST': {
-            const { email, username, password, captcha, ip } = req?.body;
+            const { email, username, password, captcha, ip } = JSON.parse(req?.body);
 
             if (!(email && username && password && ip)) return response.sendError('Invalid request.');
             if (!await validateCaptcha(captcha)) return response.sendError('Invalid captcha.');
@@ -85,7 +85,7 @@ export default async (req, res) => {
         };
 
         case 'DELETE': {
-            const { email, captcha, code, ip } = req?.body;
+            const { email, captcha, code, ip } = JSON.parse(req?.body);
 
             if (!(email && code && ip)) return response.sendError('Invalid request.'); 
             if (!await validateCaptcha(captcha)) return response.sendError('Invalid captcha.');

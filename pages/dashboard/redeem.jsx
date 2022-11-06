@@ -4,11 +4,11 @@ import Input from '../../components/input.mdx';
 import Button from '../../components/button.mdx';
 import { Component, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import axios from 'axios';
 import Router from 'next/router';
 import Links from '../../lib/links';
 import Alert from '../../components/alert.mdx';
 import { faCircleExclamation as Error, faCheckCircle as Check } from '@fortawesome/free-solid-svg-icons';
+import { apiRequest, setUser } from '../../lib/functions';
 
 export default class extends Component {
     state = {
@@ -22,12 +22,7 @@ export default class extends Component {
         redeemed: false
     };
 
-    componentDidMount = () => axios.get('/api/user')
-        .then((r) => r?.data?.data?.user
-            ? this.setState({ user: r?.data?.data?.user })
-            : Router.push(Links.login))
-        .catch(() => Router.push(Links.login));
-
+    componentDidMount = () => setUser((a) => this.setState(a), Router, Links.login);
 
     render = () => {
         const router = useRouter();
@@ -35,21 +30,8 @@ export default class extends Component {
 
         const submit = (e) => {
             e.preventDefault();
-    
-            this.setState({ redeemed: false });
-            this.setState({ elementsDisabled: true });
-    
-            axios.delete('/api/key', { data: { ...this.state.data } })
-                .then((res) => {
-                    if (!res.data?.data?.success || res.data?.errors?.length > 0) this.setState({ errors: res.data.errors });
-                    else {
-                        this.setState({ errors: [] });
-                        this.setState({ redeemed: true });
-                    };
-    
-                    this.setState({ elementsDisabled: false })
-                })
-                .catch(() => this.setState({ elementsDisabled: false }) && this.setState({ errors: ['API error, try again.'] }));
+
+            apiRequest(Links.api.key, 'DELETE', { ...this.state.data }, (a) => this.setState(a), 'redeemed');
         };
 
         const change = (e) => {
