@@ -5,7 +5,6 @@ import Input from '../../components/input.mdx';
 import Button from '../../components/button.mdx';
 import { Component, createRef } from 'react';
 import Router from 'next/router';
-import axios from 'axios';
 import { faCircleExclamation as Error, faCheckCircle as Check, faCheck as CheckAlt, faPencil as Edit, faTrashAlt as Delete, faBiohazard as Danger } from '@fortawesome/free-solid-svg-icons';
 import Modal from '../../components/dashboard/modal.jsx';
 import Captcha from 'react-google-recaptcha';

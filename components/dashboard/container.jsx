@@ -1,8 +1,8 @@
 import styles from './container.module.sass';
-import axios from 'axios';
 import { Component, useEffect } from 'react';
 import Links from '../../lib/links';
 import Router from 'next/router';
+import { setUser } from '../../lib/functions';
 
 export default class extends Component {
     state = {
@@ -10,11 +10,10 @@ export default class extends Component {
         visible: false
     };
 
-    componentDidMount = () => axios.get('/api/user')
-        .then((r) => r?.data?.data?.user
-            ? this.setState({ visible: true })
-            : Router.push(Links.login))
-        .catch(() => Router.push(Links.login));
+    componentDidMount = () => setUser((a) => this.setState(a), null, null, (u) => {
+        if (!u) Router.push(Links.login);
+        else this.setState({ visible: true });
+    });
 
     render = () => {
         const loading = !this.state.loaded ? (!this.state.loaded ?? this.props.loading) : (this.props.loading ?? !this.state.loaded);

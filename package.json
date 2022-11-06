@@ -34,6 +34,5 @@
     "sass": "^1.55.0",
     "styled-jsx": "^5.0.7",
     "styled-jsx-plugin-sass": "^1.0.0"
-  },
-  "devDependencies": {}
+  }
 }

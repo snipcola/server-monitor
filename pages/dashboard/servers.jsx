@@ -1,7 +1,6 @@
 import styles from './servers.module.sass';
 import Layout from '../../components/dashboard/layout.jsx';
 import { Component, useEffect } from 'react';
-import axios from 'axios';
 import Router from 'next/router';
 import Links from '../../lib/links';
 import Button from '../../components/button.mdx';
@@ -49,7 +48,7 @@ export default class extends Component {
         edited: false
     };
 
-    setUser = () =>  axios.post('/api/user')
+    /* setUser = () =>  axios.post('/api/user')
         .then((r) => (r?.data?.validated && r?.data?.user)
             ? this.setState({ user: r?.data?.user })
             : Router.push(Links.login))
@@ -57,7 +56,7 @@ export default class extends Component {
 
     setServers = () =>  axios.post('/api/user')
         .then((r) => (r?.data?.validated && r?.data?.user) && this.setState({ user: r?.data?.user }))
-        .catch();
+        .catch(); */
 
     showCreateServer = () => this.setState({ createServerModal: { ...this.defaultCreateServerModal, visible: true } });
     hideCreateServer = () => this.setState({ createServerModal: { ...this.defaultCreateServerModal, visible: false } });
