@@ -1,3 +1,5 @@
+import { getBody } from '../../../lib/functions';
+
 const { setCookie } = require('cookies-next');
 const { Response } = require('../../../lib/classes');
 
@@ -10,7 +12,7 @@ export default async (req, res) => {
     response.setResponse(res);
 
     if (req?.method === 'POST') {
-        const { auth_token } = JSON.parse(req?.body);
+        const { auth_token } = getBody(req?.body);
 
         if (!auth_token) return response.sendError('Invalid request.'); 
 

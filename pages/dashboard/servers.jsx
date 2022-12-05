@@ -10,6 +10,7 @@ import Modal from '../../components/dashboard/modal.jsx';
 import { faServer as Servers, faSatelliteDish as IpAddress, faQuestionCircle as NoImage, faCircleExclamation as Error, faCheckCircle as Check, faCheck as CheckAlt, faTrashAlt as Delete, faPencil as Edit } from '@fortawesome/free-solid-svg-icons';
 import { faDiscord as Discord, faLinux as Linux } from '@fortawesome/free-brands-svg-icons';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
+import { apiRequest, setUser } from '../../lib/functions';
 
 export default class extends Component {
     defaultCreateServerModal = {
@@ -27,8 +28,7 @@ export default class extends Component {
         data: {
             id: '',
             nickname: '',
-            ip_address: '',
-            db_name: ''
+            delete_function: null
         },
         visible: false,
         errors: [],
@@ -40,23 +40,12 @@ export default class extends Component {
             id: '',
             nickname: '',
             ip_address: '',
-            db_name: '',
             edit_function: null
         },
         visible: false,
         errors: [],
         edited: false
     };
-
-    /* setUser = () =>  axios.post('/api/user')
-        .then((r) => (r?.data?.validated && r?.data?.user)
-            ? this.setState({ user: r?.data?.user })
-            : Router.push(Links.login))
-        .catch(() => Router.push(Links.login));
-
-    setServers = () =>  axios.post('/api/user')
-        .then((r) => (r?.data?.validated && r?.data?.user) && this.setState({ user: r?.data?.user }))
-        .catch(); */
 
     showCreateServer = () => this.setState({ createServerModal: { ...this.defaultCreateServerModal, visible: true } });
     hideCreateServer = () => this.setState({ createServerModal: { ...this.defaultCreateServerModal, visible: false } });
@@ -79,63 +68,36 @@ export default class extends Component {
         this.setState({ editServerModal: { ...this.state.editServerModal, data: { ...this.state.editServerModal?.data, [name]: value } } });
     };
 
+    setServers = () => apiRequest(Links.api.servers.ip, 'GET', null, null, null, (data) => this.setState({ servers: data?.servers }));
+
     submitCreateIPServer = (e) => {
         e.preventDefault();
 
-        this.setState({ createServerModal: { ...this.state.createServerModal, created: false, errors: [] } });
-        this.setState({ elementsDisabled: true });
-
-        createIPServer({ variables: { ...this.state.createServerModal?.data, auth_token: this.state.user?.auth_token } })
-            .then((res) => {
-                if (!res.data.createIPServer?.created || res.data.createIPServer?.errors?.length > 0) this.setState({ createServerModal: { ...this.state.createServerModal, errors: res.data.createIPServer?.errors } });
-                else {
-                    this.setState({ createServerModal: { ...this.state.createServerModal, errors: [], created: true } });
-                    this.setServers();
-                    this.hideCreateServer();
-                };
-
-                this.setState({ elementsDisabled: false })
-            })
-            .catch(() => this.setState({ elementsDisabled: false }) && this.setState({ createServerModal: { ...this.state.createServerModal, errors: ['API error, try again.'] } }));
+        apiRequest(Links.api.server.ip, 'POST', { ...this.state.createServerModal?.data, auth_token: this.state.user?.auth_token }, (a) => this.setState({
+            createServerModal: {
+                ...this.state.createServerModal,
+                ...a
+            } }), 'created', this.setServers);
     };
 
-    submitDeleteServer = (e) => {
+    submitDeleteIPServer = (e) => {
         e.preventDefault();
-
-        this.setState({ deleteServerModal: { ...this.state.deleteServerModal, deleted: false, errors: [] } });
-        this.setState({ elementsDisabled: true });
-
-        deleteServer({ variables: { ...this.state.deleteServerModal?.data, auth_token: this.state.user?.auth_token } })
-            .then((res) => {
-                if (!res.data.deleteServer?.deleted || res.data.deleteServer?.errors?.length > 0) this.setState({ deleteServerModal: { ...this.state.deleteServerModal, errors: res.data.deleteServer?.errors } });
-                else {
-                    this.setState({ deleteServerModal: { ...this.state.deleteServerModal, errors: [], deleted: true } });
-                    this.setServers();
-                    this.hideDeleteServer();
-                };
-
-                this.setState({ elementsDisabled: false })
-            })
-            .catch(() => this.setState({ elementsDisabled: false }) && this.setState({ deleteServerModal: { ...this.state.deleteServerModal, errors: ['API error, try again.'] } }));
+        
+        apiRequest(Links.api.server.ip, 'DELETE', { ...this.state.deleteServerModal?.data, auth_token: this.state.user?.auth_token }, (a) => this.setState({
+            deleteServerModal: {
+                ...this.state.deleteServerModal,
+                ...a
+            } }), 'deleted', this.setServers);
     };
 
     submitEditIPServer = (e) => {
         e.preventDefault();
         
-        this.setState({ editServerModal: { ...this.state.editServerModal, edited: false, errors: [] } });
-        this.setState({ elementsDisabled: true });
-
-        editIPServer({ variables: { ...this.state.editServerModal?.data, auth_token: this.state.user?.auth_token } })
-            .then((res) => {
-                if (!res.data.editIPServer?.edited || res.data.editIPServer?.errors?.length > 0) this.setState({ editServerModal: { ...this.state.editServerModal, errors: res.data.editIPServer?.errors } });
-                else {
-                    this.setState({ editServerModal: { ...this.state.editServerModal, errors: [], edited: true } });
-                    this.setServers();
-                };
-
-                this.setState({ elementsDisabled: false })
-            })
-            .catch(() => this.setState({ elementsDisabled: false }) && this.setState({ editServerModal: { ...this.state.editServerModal, errors: ['API error, try again.'] } }));
+        apiRequest(Links.api.server.ip, 'PUT', { ...this.state.editServerModal?.data, auth_token: this.state.user?.auth_token }, (a) => this.setState({
+            editServerModal: {
+                ...this.state.editServerModal,
+                ...a
+            } }), 'edited', this.setServers);
     };
 
     ChangeServerType = (serverType) => this.setState({ createServerModal: { ...this.state.createServerModal, data: { ...this.state.createServerModal.data, server_type: serverType } } });
@@ -147,18 +109,18 @@ export default class extends Component {
         </div>
     );
 
-    ToggleFilter = (label, db_label, icon, db_name, edit_function) => this.state.selectedFilters?.find((f) => f?.label === label)
+    ToggleFilter = (label, icon, edit_function, delete_function) => this.state.selectedFilters?.find((f) => f?.label === label)
         ? this.setState({ selectedFilters: this.state.selectedFilters.filter((f) => f?.label !== label) })
-        : this.setState({ selectedFilters: [...this.state.selectedFilters, { label, db_label, icon, db_name, edit_function }] });
+        : this.setState({ selectedFilters: [...this.state.selectedFilters, { label, icon, edit_function, delete_function }] });
 
-    Filter = ({ label, icon, disabled, db_label, db_name, edit_function }) => (
-        <div className={`${styles.filter} ${(disabled || this.state.elementsDisabled) ? styles.disabled : ''} ${this.state.selectedFilters?.find((f) => f.label === label) ? styles.selected : ''}`} onClick={() => this.ToggleFilter(label, db_label, icon, db_name, edit_function)}>
+    Filter = ({ label, icon, disabled, edit_function, delete_function }) => (
+        <div className={`${styles.filter} ${(disabled || this.state.elementsDisabled) ? styles.disabled : ''} ${this.state.selectedFilters?.find((f) => f.label === label) ? styles.selected : ''}`} onClick={() => this.ToggleFilter(label, icon, edit_function, delete_function)}>
             {icon && <div className={styles.iconContainer}><Icon className={styles.icon} icon={icon} /></div>}
             <div className={styles.title}>{label}</div>
         </div>
     );
 
-    Server = ({ id, nickname, status, ip_address, icon, db_name, edit_function }) => (
+    Server = ({ id, nickname, status, ip_address, icon, edit_function, delete_function }) => (
         <div className={styles.server}>
             <div className={styles.header}>
                 <Icon className={styles.icon} icon={icon} />
@@ -180,8 +142,8 @@ export default class extends Component {
             <div className={styles.seperator} />
             <div className={styles.footer}>
                 <div className={styles.buttons}>
-                    <Button className={styles.button} icon={Edit} onClick={() => this.showEditServer({ id, nickname, ip_address, db_name, edit_function })} label='Edit' disabled={this.state.elementsDisabled} />
-                    <Button className={styles.deleteButton} icon={Delete} onClick={() => this.showDeleteServer({ id, nickname, ip_address, db_name })} label='Delete' disabled={this.state.elementsDisabled} />
+                    <Button className={styles.button} icon={Edit} onClick={() => this.showEditServer({ id, nickname, ip_address, edit_function })} label='Edit' disabled={this.state.elementsDisabled} />
+                    <Button className={styles.deleteButton} icon={Delete} onClick={() => this.showDeleteServer({ id, nickname, ip_address, delete_function })} label='Delete' disabled={this.state.elementsDisabled} />
                 </div>
             </div>
         </div>
@@ -190,6 +152,7 @@ export default class extends Component {
     state = {
         loading: false,
         user: {},
+        servers: [],
         elementsDisabled: false,
         createServerModal: this.defaultCreateServerModal,
         deleteServerModal: this.defaultDeleteServerModal,
@@ -209,9 +172,9 @@ export default class extends Component {
                 </div>
             ),
             createButton: <Button className={styles.createServerButton} icon={IpAddress} onClick={this.submitCreateIPServer} label='Monitor IP Address' disabled={this.state.elementsDisabled} />,
-            db_label: 'ip_servers',
-            db_name: 'IPServer',
-            edit_function: this.submitEditIPServer
+            type: 'ip',
+            edit_function: this.submitEditIPServer,
+            delete_function: this.submitDeleteIPServer
         },
         {
             label: 'Discord Bot',
@@ -238,18 +201,17 @@ export default class extends Component {
     SetFilters = (filterLabels) => this.setState({ selectedFilters: this.ServerTypes?.filter(({ label }) => filterLabels?.includes(label)) });
 
     componentDidMount = () => {
-        alert('API under maintenance. All server related functions temporarily disabled.');
-        Router.push(Links.dashboard.settings);
+        this.setServers();
+        setUser((a) => this.setState(a), Router, Links.login);
+        this.SetFilters(['IP Address', 'Discord Bot', 'Roblox Game', 'Linux OS', 'FiveM']);
     };
-
-    //componentDidMount = () => this.setUser() && this.SetFilters(['IP Address', 'Discord Bot', 'Roblox Game', 'Linux OS', 'FiveM']);
 
     render = () => {
         const ServerTypes = this.ServerTypes;
 
         useEffect(() => {
-            const setServers = setInterval(this.setServers, 5000);
-            return () => clearInterval(setServers);
+            const _setServers = setInterval(this.setServers, 5000);
+            return () => clearInterval(_setServers);
         }, [this])
 
         return (
@@ -281,17 +243,13 @@ export default class extends Component {
                 </Modal>
                 <Modal show={this.state.deleteServerModal.visible} title='ARE YOU SURE?' footer={(
                     <div className={styles.buttons}>
-                        <Button className={styles.deleteButton} onClick={this.submitDeleteServer} label='Delete' disabled={this.state.elementsDisabled} />
+                        <Button className={styles.deleteButton} onClick={this.state?.deleteServerModal?.data?.delete_function} label='Delete' disabled={this.state.elementsDisabled} />
                         <Button className={styles.button} onClick={this.hideDeleteServer} label='Close' disabled={this.state.elementsDisabled} />
                     </div>
                 )}>
                     <div className={styles.inputContainer}>
                         <label className={styles.label}>Nickname</label>
                         <Input className={styles.input} value={this.state.deleteServerModal?.data?.nickname} name='nickname' type='text' disabled={true} />
-                    </div>
-                    <div className={styles.inputContainer}>
-                        <label className={styles.label}>IP Address</label>
-                        <Input className={styles.input} value={this.state.deleteServerModal?.data?.ip_address} name='ip_address' type='text' disabled={true} />
                     </div>
                     <Alert style={{ display: this.state.deleteServerModal?.errors?.length == 0 ? 'none' : 'flex' }} variant='danger' icon={Error} label={(
                         <p>
@@ -324,13 +282,13 @@ export default class extends Component {
                     <Alert style={{ display: this.state.editServerModal?.edited ? 'flex' : 'none' }} variant='success' icon={Check} label={(<p>You've successfully edited the server.</p>)} className={styles.alert} />
                 </Modal>
                 <div className={styles.filters}>{ServerTypes.map(this.Filter)}</div>
-                <div className={styles.servers}>{this.state.selectedFilters?.map(({ icon, db_label, db_name, label, edit_function }) => {
-                    const servers = this.state.user[db_label];
+                <div className={styles.servers}>{this.state.selectedFilters?.map(({ icon, type, label, edit_function, delete_function }) => {
+                    const servers = this.state.servers.filter((s) => s?.type === type);
 
                     if (servers) return (
                         <div className={styles.container}>
-                            <div className={styles.title}>{label}</div>
-                            <div className={styles.server_list}>{servers?.sort((a, b) => a?.nickname ? a?.nickname?.localeCompare(b?.nickname) : 0)?.sort((a) => a?.status ? ['OFFLINE', 'PENDING'].includes(a?.status) && -1 : 0)?.map((server) => this.Server({ ...server, icon, db_name, edit_function }))}</div>
+                            {servers?.length > 0 && (<div className={styles.title}>{label}</div>)}
+                            <div className={styles.server_list}>{servers?.sort((a, b) => a?.nickname ? a?.nickname?.localeCompare(b?.nickname) : 0)?.sort((a) => a?.status ? ['OFFLINE', 'PENDING'].includes(a?.status) && -1 : 0)?.map((server) => this.Server({ ...server, icon, edit_function, delete_function }))}</div>
                         </div>
                     );
                 })}</div>

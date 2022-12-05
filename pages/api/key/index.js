@@ -1,7 +1,7 @@
 const { getCookie } = require('cookies-next');
 
 const { Response } = require('../../../lib/classes');
-const { daysUntil, addToDate } = require('../../../lib/functions');
+const { daysUntil, addToDate, getBody } = require('../../../lib/functions');
 
 const { tables } = require('../../../lib/mysql/queries');
 const { selectInTable, deleteFromTable, updateInTable } = require('../../../lib/mysql/functions');
@@ -15,7 +15,7 @@ export default async (req, res) => {
     switch (method) {
         case 'DELETE': {
             const auth_token = getCookie('auth_token', { req, res }) ?? '';
-            const { key } = JSON.parse(req?.body);
+            const { key } = getBody(req?.body);
 
             if (!auth_token || !key) return response.sendError('Invalid request.'); 
 

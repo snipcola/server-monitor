@@ -3,7 +3,7 @@ const { randomUUID } = require('crypto');
 
 const { plans } = require('../../../lib/config');
 const { Response } = require('../../../lib/classes');
-const { validateCaptcha, hashPassword, logError, daysUntil } = require('../../../lib/functions');
+const { validateCaptcha, hashPassword, logError, daysUntil, getBody } = require('../../../lib/functions');
 
 const { lengths, returnColumns } = require('../../../lib/user/config');
 const {
@@ -49,7 +49,7 @@ export default async (req, res) => {
         
         case 'PUT': {
             const auth_token = getCookie('auth_token', { req, res }) ?? '';
-            const { username, current_password, desired_password, captcha, plan } = JSON.parse(req?.body);
+            const { username, current_password, desired_password, captcha, plan } = getBody(req?.body);
 
             if (!auth_token || !(username || plan || (current_password && desired_password))) return response.sendError('Invalid request.'); 
 
