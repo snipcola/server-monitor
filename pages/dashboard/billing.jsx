@@ -34,7 +34,6 @@ export default class extends Component {
                     { label: 'IP Address monitoring.', included: true },
                     { label: 'Email notifications.', included: false },
                     { label: 'Discord channel notifications.', included: false },
-                    { label: 'Discord bot monitoring.', included: false },
                     { label: 'Roblox Game monitoring.', included: false },
                     { label: 'Linux OS monitoring.', included: false },
                     { label: 'FiveM monitoring.', included: false }
@@ -49,7 +48,6 @@ export default class extends Component {
                     { label: 'IP Address monitoring.', included: true },
                     { label: 'Email notifications.', included: true },
                     { label: 'Discord channel notifications.', included: true },
-                    { label: 'Discord bot monitoring.', included: true },
                     { label: 'Roblox Game monitoring.', included: true },
                     { label: 'Linux OS monitoring.', included: true },
                     { label: 'FiveM monitoring.', included: true }
@@ -69,7 +67,6 @@ export default class extends Component {
                     { label: 'IP Address monitoring.', included: true },
                     { label: 'Email notifications.', included: true },
                     { label: 'Discord channel notifications.', included: true },
-                    { label: 'Discord bot monitoring.', included: true },
                     { label: 'Roblox Game monitoring.', included: false },
                     { label: 'Linux OS monitoring.', included: false },
                     { label: 'FiveM monitoring.', included: false }

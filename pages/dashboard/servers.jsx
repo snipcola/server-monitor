@@ -109,12 +109,61 @@ export default class extends Component {
         </div>
     );
 
-    ToggleFilter = (label, icon, edit_function, delete_function) => this.state.selectedFilters?.find((f) => f?.label === label)
-        ? this.setState({ selectedFilters: this.state.selectedFilters.filter((f) => f?.label !== label) })
-        : this.setState({ selectedFilters: [...this.state.selectedFilters, { label, icon, edit_function, delete_function }] });
+    state = {
+        loading: false,
+        user: {},
+        servers: [],
+        elementsDisabled: false,
+        createServerModal: this.defaultCreateServerModal,
+        deleteServerModal: this.defaultDeleteServerModal,
+        editServerModal: this.defaultEditServerModal,
+        selectedFilters: []
+    };
 
-    Filter = ({ label, icon, disabled, edit_function, delete_function }) => (
-        <div className={`${styles.filter} ${(disabled || this.state.elementsDisabled) ? styles.disabled : ''} ${this.state.selectedFilters?.find((f) => f.label === label) ? styles.selected : ''}`} onClick={() => this.ToggleFilter(label, icon, edit_function, delete_function)}>
+    ServerTypes = [
+        {
+            label: 'IP Address',
+            icon: IpAddress,
+            disabled: false,
+            content: (
+                <div className={styles.inputContainer}>
+                    <label className={styles.label}>IP Address</label>
+                    <Input className={styles.input} onChange={this.changeCreateServer} value={this.state.createServerModal?.data?.ip_address} placeholder='127.0.0.1 / 127.0.0.1:8080' name='ip_address' type='text' disabled={this.state.elementsDisabled} />
+                </div>
+            ),
+            createButton: <Button className={styles.createServerButton} icon={IpAddress} onClick={this.submitCreateIPServer} label='Monitor IP Address' disabled={this.state.elementsDisabled} />,
+            type: 'ip',
+            edit_function: this.submitEditIPServer,
+            delete_function: this.submitDeleteIPServer
+        },
+        {
+            label: 'Discord Bot',
+            icon: Discord,
+            disabled: false
+        },
+        {
+            label: 'Roblox Game',
+            icon: NoImage,
+            disabled: false
+        },
+        {
+            label: 'Linux OS',
+            icon: Linux,
+            disabled: false
+        },
+        {
+            label: 'FiveM',
+            icon: NoImage,
+            disabled: false
+        }
+    ];
+
+    ToggleFilter = (label) => this.state.selectedFilters?.find((f) => f?.label === label)
+        ? this.setState({ selectedFilters: this.state.selectedFilters.filter((f) => f?.label !== label) })
+        : this.setState({ selectedFilters: [...this.state.selectedFilters, this.ServerTypes?.find((f) => f?.label === label)] });
+
+    Filter = ({ label, icon, disabled }) => (
+        <div className={`${styles.filter} ${(disabled || this.state.elementsDisabled) ? styles.disabled : ''} ${this.state.selectedFilters?.find((f) => f.label === label) ? styles.selected : ''}`} onClick={() => this.ToggleFilter(label)}>
             {icon && <div className={styles.iconContainer}><Icon className={styles.icon} icon={icon} /></div>}
             <div className={styles.title}>{label}</div>
         </div>
@@ -148,55 +197,6 @@ export default class extends Component {
             </div>
         </div>
     );
-
-    state = {
-        loading: false,
-        user: {},
-        servers: [],
-        elementsDisabled: false,
-        createServerModal: this.defaultCreateServerModal,
-        deleteServerModal: this.defaultDeleteServerModal,
-        editServerModal: this.defaultEditServerModal,
-        selectedFilters: []
-    };
-
-    ServerTypes = [
-        {
-            label: 'IP Address',
-            icon: IpAddress,
-            disabled: false,
-            content: (
-                <div className={styles.inputContainer}>
-                    <label className={styles.label}>IP Address</label>
-                    <Input className={styles.input} onChange={this.changeCreateServer} value={this.state.createServerModal?.data?.ip_address} placeholder='127.0.0.1' name='ip_address' type='text' disabled={this.state.elementsDisabled} />
-                </div>
-            ),
-            createButton: <Button className={styles.createServerButton} icon={IpAddress} onClick={this.submitCreateIPServer} label='Monitor IP Address' disabled={this.state.elementsDisabled} />,
-            type: 'ip',
-            edit_function: this.submitEditIPServer,
-            delete_function: this.submitDeleteIPServer
-        },
-        {
-            label: 'Discord Bot',
-            icon: Discord,
-            disabled: false
-        },
-        {
-            label: 'Roblox Game',
-            icon: NoImage,
-            disabled: false
-        },
-        {
-            label: 'Linux OS',
-            icon: Linux,
-            disabled: false
-        },
-        {
-            label: 'FiveM',
-            icon: NoImage,
-            disabled: false
-        }
-    ];
 
     SetFilters = (filterLabels) => this.setState({ selectedFilters: this.ServerTypes?.filter(({ label }) => filterLabels?.includes(label)) });
 
