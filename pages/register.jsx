@@ -63,7 +63,7 @@ export default class extends Component {
                     <Container containerClass={loginStyles.container} contentClass={loginStyles.content}>
                         <div className={loginStyles.title}>
                             <h1 className={loginStyles.text}>Register</h1>
-                            <p className={loginStyles.description}>Register a Server Monitor account.</p>
+                            <p className={loginStyles.description}>By creating a Server Monitor account, you agree to the <NextLink className={loginStyles.link} href={Links.legal.termsOfService}>Terms of Service</NextLink> and <NextLink className={loginStyles.link} href={Links.legal.privacyPolicy}>Privacy Policy</NextLink>.</p>
                         </div>
                         <Input className={loginStyles.input} name='email' onChange={change} placeholder='Email address' type='email' disabled={this.state.elementsDisabled} />
                         <Input className={loginStyles.input} name='username' onChange={change} placeholder='Username' type='text' disabled={this.state.elementsDisabled} />
