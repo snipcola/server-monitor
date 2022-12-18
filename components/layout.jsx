@@ -1,4 +1,4 @@
-import Header from './header.mdx';
+import Header from './header.jsx';
 import Footer from './footer.mdx';
 import styles from './layout.module.sass';
 import { useState, useEffect } from 'react';
