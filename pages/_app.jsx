@@ -8,6 +8,7 @@ export default class App extends Component {
             <Head>
                 <meta name='viewport' content='width=device-width,initial-scale=1' />
                 <title>Server Monitor - The best monitoring solution</title>
+                <script src="https://servermonitor1.statuspage.io/embed/script.js"></script>
             </Head>
 
             <Component {...pageProps} />
