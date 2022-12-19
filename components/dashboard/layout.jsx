@@ -1,6 +1,6 @@
 import styles from './layout.module.sass';
 import Container from '../../components/dashboard/container.jsx';
-import Header from '../../components/dashboard/header.mdx';
+import Header from '../../components/dashboard/header.jsx';
 import Sidebar from '../../components/dashboard/sidebar.mdx';
 import { Component } from 'react';
 

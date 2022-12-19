@@ -1,10 +1,6 @@
 @import './variables.sass'
 
-@media screen and (max-width: 1100px)
-    .header .links
-        display: none !important
-
-.header
+.header, .headerMobile
     width: 100% !important
     height: $header-height !important
     background-color: lighten($primary, 5%) !important
@@ -41,6 +37,7 @@
                 margin-right: 0 !important
 
     .sidebarButton
+        display: none
         margin-left: auto !important
         background-color: lighten($primary, 3%) !important
         padding: .75rem !important
@@ -55,3 +52,37 @@
         .sidebarIcon
             width: 1.75rem !important
             height: 1rem !important
+
+.headerMobile
+    display: none !important
+    padding: 1rem 2.5rem !important
+    position: fixed
+    z-index: 9999
+    margin-top: 1rem
+    height: fit-content !important
+    width: calc(100% - 2rem) !important
+
+    .title
+        &:hover
+            color: lighten($primary, 50%) !important
+            cursor: default !important
+
+        &:first-child
+            margin-top: 0 !important
+
+        margin-top: 1rem !important
+
+    .links
+        margin-left: 0 !important
+        flex-direction: column !important
+
+@media screen and (max-width: 1100px)
+    .header
+        .links
+            display: none !important
+
+        .sidebarButton
+            display: block !important
+
+    .headerMobile
+        display: block !important
