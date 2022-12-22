@@ -1,16 +1,13 @@
 const { getCookie } = require('cookies-next');
 
 const { Response } = require('../../../../lib/classes');
-const { getBody, logError } = require('../../../../lib/functions');
-
+const { getBody, logError, validateIP } = require('../../../../lib/functions');
 
 const { getServers } = require('../../../../lib/server/functions');
 const { lengths } = require('../../../../lib/user/config');
 
 const { tables } = require('../../../../lib/mysql/queries');
 const { selectInTable, insertIntoTable, deleteFromTable, updateInTable } = require('../../../../lib/mysql/functions');
-
-const { isIPAddress } = require('ip-address-validator');
 
 const {
     validateLength,
@@ -30,6 +27,8 @@ export default async (req, res) => {
             const auth_token = getCookie('auth_token', { req, res }) ?? '';
             const { nickname, ip_address } = getBody(req?.body);
 
+            const [ ip, port ] = ip_address?.split(':');
+
             if (!auth_token || !nickname || !ip_address) return response.sendError('Invalid request.'); 
 
             const { exists: authTokenExists, data: { rows: userRows } } = await selectInTable(tables.users, 'id, subscription', [
@@ -45,7 +44,7 @@ export default async (req, res) => {
 
             if (response.hasErrors()) return response.send();
 
-            if (!isIPAddress(ip_address)) return response.sendError('Invalid Server IP Address.');
+            if (!validateIP(ip, port)) return response.sendError('Invalid Server IP Address.');
 
             const serversLimit = lengths.subscription.servers[user?.subscription];
             const servers = await getServers(user?.id);
