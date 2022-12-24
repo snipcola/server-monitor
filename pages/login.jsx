@@ -16,7 +16,7 @@ export default class extends Component {
         visible: false,
         elementsDisabled: false,
         userData: {
-            email: '',
+            login: '',
             password: ''
         },
         errors: []
@@ -59,7 +59,7 @@ export default class extends Component {
                             <h1 className={styles.text}>Log in</h1>
                             <p className={styles.description}>Log into your Server Monitor account.</p>
                         </div>
-                        <Input className={styles.input} name='email' onChange={change} placeholder='Email address' type='email' disabled={this.state.elementsDisabled} />
+                        <Input className={styles.input} name='login' onChange={change} placeholder='Email/Username' type='email' disabled={this.state.elementsDisabled} />
                         <Input className={styles.input} name='password' onChange={change} placeholder='Password' type='password' disabled={this.state.elementsDisabled} />
                         <Captcha className={styles.captcha} ref={captchaRef} sitekey={`6LeJsxAiAAAAAM1g0-bOndBDAkaEs5VYYxnxx2Ep`} />
                         <div className={styles.buttons}>
