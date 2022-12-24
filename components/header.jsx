@@ -34,7 +34,7 @@ export default (props) => {
 
             <Container containerClass={styles.header}>
                 <NextLink href='/'>
-                    <Image className={styles.brand} src='/icon_full.svg' width={244} height={35} />
+                    <Image className={styles.brand} src='/icon_full.svg' width={244} height={35} priority  />
                 </NextLink>
 
                 <div className={styles.links}>{Links.map(Link)}</div>

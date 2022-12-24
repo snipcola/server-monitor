@@ -27,7 +27,7 @@ export const Links = [
 
 export const Link = ({ label, link }) => <NextLink href={link}><h1 className={styles.link}>{label}</h1></NextLink>;
 
-export default (props) => {
+export default () => {
     const [mobileHeaderActive, setMobileHeaderActive] = useState(false);
 
     const toggleMobileHeader = () => setMobileHeaderActive(!mobileHeaderActive);
