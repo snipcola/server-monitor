@@ -25,7 +25,7 @@ export default async (req, res) => {
 
             const user = userRows[0];
             
-            const { data: { rows: serversRows } } = await selectInTable(tables.ipServers, 'id, nickname, ip_address, status', [
+            const { data: { rows: serversRows } } = await selectInTable(tables.ipServers, 'id, nickname, ip_address, status, response_time', [
                 { name: 'owner_id', value: user?.id }
             ]);
 
