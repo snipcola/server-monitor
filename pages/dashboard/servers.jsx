@@ -7,7 +7,7 @@ import Button from '../../components/button.mdx';
 import Alert from '../../components/alert.mdx';
 import Input from '../../components/input.mdx';
 import Modal from '../../components/dashboard/modal.jsx';
-import { faServer as Servers, faSatelliteDish as IpAddress, faQuestionCircle as NoImage, faCircleExclamation as Error, faCheckCircle as Check, faCheck as CheckAlt, faTrashAlt as Delete, faPencil as Edit } from '@fortawesome/free-solid-svg-icons';
+import { faServer as Servers, faSync as Refresh, faSatelliteDish as IpAddress, faQuestionCircle as NoImage, faCircleExclamation as Error, faCheckCircle as Check, faCheck as CheckAlt, faTrashAlt as Delete, faPencil as Edit } from '@fortawesome/free-solid-svg-icons';
 import { faDiscord as Discord, faLinux as Linux } from '@fortawesome/free-brands-svg-icons';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { apiRequest, setUser } from '../../lib/functions';
@@ -219,7 +219,12 @@ export default class extends Component {
         }, [this])
 
         return (
-            <Layout label='SERVERS' rightContent={<Button onClick={this.showCreateServer} className={styles.button} iconRight={Servers} label='Monitor Server' variant='primary' />}>
+            <Layout label='SERVERS' rightContent={
+                <div className={styles.buttons}>
+                    <Button onClick={this.setServers} className={styles.button} iconRight={Refresh} label='Refresh' variant='primary' />
+                    <Button onClick={this.showCreateServer} className={styles.button} iconRight={Servers} label='Monitor Server' variant='primary' />
+                </div>
+            }>
                 <Modal show={this.state.createServerModal.visible} title='MONITOR SERVER' footer={(
                     <div className={styles.buttons}>
                         {ServerTypes.find((st) => st?.label === this.state.createServerModal?.data?.server_type)?.createButton}
