@@ -188,7 +188,7 @@ export default class extends Component {
                     </div>
                     <div className={styles.data}>
                         <p className={styles.label}>Response Time</p>
-                        <p className={`${styles.value} ${styles.response_time} ${styles[(response_time < 1) ? 'green' : ((response_time < 5) ? 'orange' : 'red')]}`}>{`${response_time}s ` ?? 'UNFETCHABLE'}</p>
+                        <p className={`${styles.value} ${styles.response_time} ${styles[(response_time < 1000) ? 'green' : ((response_time < 5000) ? 'orange' : 'red')]}`}>{`${response_time}ms ` ?? 'UNFETCHABLE'}</p>
                     </div>
                 </div>
             </div>
