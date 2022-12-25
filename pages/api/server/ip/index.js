@@ -111,6 +111,8 @@ export default async (req, res) => {
             const auth_token = getCookie('auth_token', { req, res }) ?? '';
             const { id, nickname, ip_address } = getBody(req?.body);
 
+            const [ ip, port ] = ip_address?.split(':');
+
             if (!auth_token || !id || !nickname || !ip_address) return response.sendError('Invalid request.'); 
 
             const { exists: authTokenExists, data: { rows: userRows } } = await selectInTable(tables.users, 'id, subscription', [
@@ -128,12 +130,19 @@ export default async (req, res) => {
 
             if (!serverExists) return response.sendError('Server does not exist.');
 
+            const { exists: nicknameExists } = await selectInTable(tables.ipServers, null, [
+                { name: 'UPPER(nickname)', value: nickname?.toUpperCase(), seperator: 'AND' },
+                { name: 'owner_id', value: user?.id }
+            ]);
+
+            if (nicknameExists) return response.sendError('You\'ve used this nickname before.');
+
             if (!validateLength(nickname, lengths.server_nickname)) response.addError(invalidLength('Nickname', lengths.server_nickname));
             else if (!validateServerNickname(nickname)) response.addError(invalidServerNickname);
 
             if (response.hasErrors()) return response.send();
 
-            if (!isIPAddress(ip_address)) return response.sendError('Invalid Server IP Address.');
+            if (!validateIP(ip, port)) return response.sendError('Invalid Server IP Address.');
 
             const { error: failedServerUpdate } = await updateInTable(tables.ipServers, [
                 { name: 'nickname', value: nickname },
