@@ -12,6 +12,9 @@ import { faLinux as Linux } from '@fortawesome/free-brands-svg-icons';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { apiRequest, setUser } from '../../lib/functions';
 
+import 'chart.js/auto';
+import { Bar } from 'react-chartjs-2';
+
 export default class extends Component {
     defaultCreateServerModal = {
         data: {},
@@ -39,6 +42,7 @@ export default class extends Component {
         filters: [],
         user: {},
         servers: [],
+        ipServerResponseTimes: [],
         elementsDisabled: false,
         createServerModal: this.defaultCreateServerModal,
         deleteServerModal: this.defaultDeleteServerModal,
@@ -66,7 +70,19 @@ export default class extends Component {
         this.setState({ editServerModal: { ...this.state.editServerModal, data: { ...this.state.editServerModal?.data, [name]: value } } });
     };
 
-    setServers = () => apiRequest(Links.api.servers.ip, 'GET', null, null, null, (data) => this.setState({ servers: data?.servers }));
+    setServers = async () => {
+        const ipServers = await new Promise((res) => apiRequest(Links.api.servers.ip, 'GET', null, null, null, (data) => res(data?.servers ?? [])));
+        const servers = [...ipServers];
+
+        this.setState({
+            ipServerResponseTimes: ipServers?.map(({ id, response_time }) => {
+                const response_times = this?.state?.ipServerResponseTimes?.find((srt) => srt?.id === id)?.response_times ?? [];
+
+                return { id, response_times: [...(response_times?.length > 15 ? response_times?.splice(1, response_times?.length) : response_times), response_time] };
+            }),
+            servers
+        });
+    };
 
     submitCreateServer = (e, apiLink) => {
         e.preventDefault();
@@ -108,7 +124,7 @@ export default class extends Component {
             sort: (servers) => servers
                 .sort((a, b) => a?.nickname ? a?.nickname?.localeCompare(b?.nickname) : 0)
                 .sort((a) => a?.status ? ['OFFLINE', 'PENDING'].includes(a?.status) && -1 : 0),
-            viewData: ({ ip_address, status, response_time }) => (
+            viewData: ({ id, ip_address, status }) => (
                 <div className={styles.list}>
                     <div className={styles.data}>
                         <p className={styles.label}>IP Address</p>
@@ -118,9 +134,18 @@ export default class extends Component {
                         <p className={styles.label}>Status</p>
                         <p className={`${styles.value} ${styles.status} ${styles[status?.toLowerCase()]}`}>{status?.toUpperCase() ?? 'UNFETCHABLE'}</p>
                     </div>
-                    <div className={styles.data}>
-                        <p className={styles.label}>Response Time</p>
-                        <p className={`${styles.value} ${styles.response_time} ${styles[(response_time < 1000) ? 'green' : ((response_time < 5000) ? 'orange' : 'red')]}`}>{`${response_time}ms ` ?? 'UNFETCHABLE'}</p>
+                    <div className={styles.data} style={{ flexDirection: 'column' }}>
+                        <p className={styles.label}>Response Time (ms)</p>
+                        <this.BarChart data={{
+                            labels: this.state.ipServerResponseTimes?.find((srt) => srt?.id === id)?.response_times?.map((r) => `${r}ms`),
+                            datasets: [{
+                                label: "Response Time",
+                                innerWidth: .1,
+                                outerWidth: .1,
+                                backgroundColor: this.state.ipServerResponseTimes?.find((srt) => srt?.id === id)?.response_times?.map((r) => r < 1000 ? '#6DFA94' : r < 5000 ? '#e67e22' : '#fa6d6d'),
+                                data: this.state.ipServerResponseTimes?.find((srt) => srt?.id === id)?.response_times
+                            }]
+                        }} />
                     </div>
                 </div>
             ),
@@ -188,6 +213,21 @@ export default class extends Component {
             </div>
         </div>
     );
+
+    BarChart = ({ data }) => <Bar data={data} options={{
+        plugins: {
+            legend: {
+                display: false
+            }
+        },
+        scales: {
+            x: {
+                ticks: {
+                    display: false
+                }
+            }
+        }
+    }} />;
 
     componentDidMount = () => {
         this.setServers();
