@@ -130,12 +130,12 @@ export default async (req, res) => {
 
             if (!serverExists) return response.sendError('Server does not exist.');
 
-            const { exists: nicknameExists } = await selectInTable(tables.ipServers, null, [
+            const { exists: nicknameExists, data: { rows: [{ id: nicknameId }] } } = await selectInTable(tables.ipServers, 'id', [
                 { name: 'UPPER(nickname)', value: nickname?.toUpperCase(), seperator: 'AND' },
                 { name: 'owner_id', value: user?.id }
             ]);
 
-            if (nicknameExists) return response.sendError('You\'ve used this nickname before.');
+            if (nicknameExists && id !== nicknameId) return response.sendError('You\'ve used this nickname before.');
 
             if (!validateLength(nickname, lengths.server_nickname)) response.addError(invalidLength('Nickname', lengths.server_nickname));
             else if (!validateServerNickname(nickname)) response.addError(invalidServerNickname);
