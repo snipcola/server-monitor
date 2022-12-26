@@ -20,7 +20,7 @@ const { selectInTable, updateInTable, deleteFromTable } = require('../../../lib/
 
 export default async (req, res) => {
     const response = new Response();
-    const method = req?.method;
+    const method = req?.method; 
     
     response.setResponse(res);
 
