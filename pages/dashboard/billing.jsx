@@ -55,7 +55,7 @@ export default class extends Component {
                 price: 5.99,
                 featured: true,
                 sellixConfig: {
-                    id: '6348762b1954c'
+                    id: '63a97f23515b9'
                 },
                 expiry: this.state.user?.premium_expiry
             },
@@ -73,7 +73,7 @@ export default class extends Component {
                 ],
                 price: 3.99,
                 sellixConfig: {
-                    id: '634861e6a4ac2'
+                    id: '63a97e4030e84'
                 },
                 expiry: this.state.user?.plus_expiry
             }
