@@ -2,7 +2,7 @@ name: Server Monitor CI/CD
 
 on:
   push:
-    branches: [ 'master' ]
+    branches: [ 'deploy' ]
 
 jobs:
   build:
