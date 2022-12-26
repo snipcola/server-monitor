@@ -18,36 +18,13 @@ export default async (req, res) => {
             delete: deleteDatabase
         };
 
-        if (action === 'view' && secret === config?.secret) {
-            const queries = Object.values(tables)?.map((t) => selectQuery(t, '*'));
-            const { rows: databaseRows, error: databaseError } = await multiQueryDatabase(queries);
+        if (!query[action] || secret !== config?.secret) return response.sendError('Invalid/unauthorized request.');
+    
+        const { rows, error } = await multiQueryDatabase(query[action]);
 
-            if (databaseError) return response.sendError(logError(databaseError));
+        if (error) return response.sendError(logError(error));
 
-            const database = databaseRows?.reduce((obj, rows, idx) => {
-                const tableName = Object.values(tables)[idx];
-                const _rows = rows?.reduce((obj, row, idx) => {
-                    obj[row?.username ?? row?.email ?? row?.id ?? idx] = row;
-
-                    return obj;
-                }, {});
-                
-                obj[tableName] = _rows;
-                
-                return obj;
-            }, {});
-            
-            response.setData(database);
-        }
-        else {
-            if (!query[action] || secret !== config?.secret) return response.sendError('Invalid/unauthorized request.');
-        
-            const { rows, error } = await multiQueryDatabase(query[action]);
-
-            if (error) return response.sendError(logError(error));
-
-            response.setData({ affectedRows: rows?.length });
-        };
+        response.setData({ affectedRows: rows?.length });
     }
     else return response.sendError(`Method '${req?.method}' not allowed.`);
 
