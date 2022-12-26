@@ -19,7 +19,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: ssh dev pm2 stop server-monitor
+    - run: ssh root@139.162.197.13 pm2 stop server-monitor
     - run: npm i
     - run: npm run build --if-present
-    - run: ssh dev pm2 start server-monitor
+    - run: ssh root@139.162.197.13 pm2 start server-monitor
