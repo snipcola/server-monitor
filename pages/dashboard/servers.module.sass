@@ -105,12 +105,16 @@
     .server
         max-width: 100% !important
         
-        &.roblox .data
-            flex-wrap: wrap !important
-            text-align: center !important
+        &.roblox
+            transform: none !important
+            transform-origin: top left !important
 
-            .barChart
-                margin-left: 0 !important
+            .data
+                flex-wrap: wrap !important
+                text-align: center !important
+
+                .barChart
+                    margin-left: 0 !important
 
 .deleteButton
     background-color: darken($red, 15%) !important
@@ -147,6 +151,12 @@
 
                 &.roblox
                     max-width: 100% !important
+                    transform: scale(.8)
+                    transform-origin: left top
+                    margin-top: -15rem
+
+                    &:first-child
+                        margin-top: 0 !important
 
                 .buttons
                     justify-content: space-between !important

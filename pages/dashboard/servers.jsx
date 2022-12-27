@@ -82,10 +82,9 @@ export default class extends Component {
 
                 return { id, response_times: [...(response_times?.length > 5 ? response_times?.splice(1, response_times?.length) : response_times), response_time] };
             }),
-            robloxGameStats: robloxServers?.map(({ id, visits, playing, favorites, likes, dislikes }) => {
+            robloxGameStats: robloxServers?.map(({ id, visits, playing, likes, dislikes }) => {
                 const _visits = this?.state?.robloxGameStats?.find((v) => v?.id === id)?.visits ?? [];
                 const _playing = this?.state?.robloxGameStats?.find((v) => v?.id === id)?.playing ?? [];
-                const _favorites = this?.state?.robloxGameStats?.find((v) => v?.id === id)?.favorites ?? [];
                 const _likes = this?.state?.robloxGameStats?.find((v) => v?.id === id)?.likes ?? [];
                 const _dislikes = this?.state?.robloxGameStats?.find((v) => v?.id === id)?.dislikes ?? [];
 
@@ -93,7 +92,6 @@ export default class extends Component {
                     id,
                     visits: [...(_visits?.length > 5 ? _visits?.splice(1, _visits?.length) : _visits), visits],
                     playing: [...(_playing?.length > 5 ? _playing?.splice(1, _playing?.length) : _playing), playing],
-                    favorites: [...(_favorites?.length > 5 ? _favorites?.splice(1, _favorites?.length) : _favorites), favorites],
                     likes: [...(_likes?.length > 5 ? _likes?.splice(1, _likes?.length) : _likes), likes],
                     dislikes: [...(_dislikes?.length > 5 ? _dislikes?.splice(1, _dislikes?.length) : _dislikes), dislikes]
                 };
@@ -194,7 +192,7 @@ export default class extends Component {
             sort: (servers) => servers
                 .sort((a, b) => a?.nickname ? a?.nickname?.localeCompare(b?.nickname) : 0)
                 .sort((a) => a?.monitoring ? ['TRUE'].includes(a?.monitoring) && -1 : 0),
-            viewData: ({ id, monitoring, place_id, name, description, creator_name, creator_type, price, copying_allowed, max_players, game_created, game_updated, genre, playing, visits, favorites, likes, dislikes }) => (
+            viewData: ({ id, monitoring, place_id, name, description, creator_name, creator_type, price, copying_allowed, max_players, game_created, game_updated, genre, favorites }) => (
                 <div className={`${styles.list} ${styles.fill}`}>
                      <div className={styles.data}>
                         <p className={styles.label}>Monitoring</p>
@@ -245,10 +243,14 @@ export default class extends Component {
                         <p className={`${styles.value} ${genre === 'PENDING' && `${styles.highlighted} ${styles.orange}`}`}>{genre}</p>
                     </div>
                     <div className={styles.data}>
+                        <p className={styles.label}>Favorites</p>
+                        <p className={styles.value}>{favorites}</p>
+                    </div>
+                    <div className={styles.data}>
                         <div className={styles.barChart}>
                             <p className={styles.label}>Visits</p>
                             <this.BarChart data={{
-                                labels: this.state.robloxGameStats?.find((s) => s?.id === id)?.visits?.map((r) => `${r} Visits`),
+                                labels: this.state.robloxGameStats?.find((s) => s?.id === id)?.visits?.map((r) => `${r.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")} Visits`),
                                 datasets: [{
                                     label: "Visits",
                                     fill: true,
@@ -264,17 +266,6 @@ export default class extends Component {
                                     label: "Players",
                                     fill: true,
                                     data: this.state.robloxGameStats?.find((s) => s?.id === id)?.playing,
-                                }]
-                            }} />
-                        </div>
-                        <div className={styles.barChart}>
-                            <p className={styles.label}>Favorites</p>
-                            <this.BarChart data={{
-                                labels: this.state.robloxGameStats?.find((s) => s?.id === id)?.favorites?.map((r) => `${r} Favorites`),
-                                datasets: [{
-                                    label: "Favorites",
-                                    fill: true,
-                                    data: this.state.robloxGameStats?.find((s) => s?.id === id)?.favorites,
                                 }]
                             }} />
                         </div>
