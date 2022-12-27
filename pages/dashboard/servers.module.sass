@@ -101,18 +101,7 @@
                 font-size: 1rem !important
                 padding: 0 1rem !important
 
-@media (max-width: 1700px)
-  .servers .container .server_list
-    grid-template-columns: repeat(3, 1fr) !important
-
-@media (max-width: 1400px)
-  .servers .container .server_list
-    grid-template-columns: repeat(2, 1fr) !important
-
 @media (max-width: 1200px)
-  .servers .container .server_list
-    grid-template-columns: 1fr !important
-
     .server
         max-width: 100% !important
 
@@ -137,15 +126,16 @@
 
     .container
         .server_list
-            display: grid !important
-            grid-template-columns: repeat(4, 1fr)
-            grid-gap: 2rem !important
+            display: flex !important
+            flex-wrap: wrap
+            gap: 2rem
+            width: fit-content
 
             .server
                 background-color: lighten($primary, 7.5%) !important
                 border-radius: $border-radius !important
                 outline: 1px solid darken($primary, 5%) !important
-                max-width: 25rem
+                max-width: 21rem
                 width: 100% !important
 
                 .buttons
@@ -213,14 +203,14 @@
                             &:nth-child(even)
                                 background-color: lighten($primary, 10%) !important
 
-                .content, .footer
+                .footer
                     padding: 1rem 2rem !important
 
-        .title
-            color: lighten($primary, 50%) !important
-            font-weight: 500 !important
-            font-size: 1.5rem !important
-            margin-bottom: 2rem !important
+    .title
+        color: lighten($primary, 50%) !important
+        font-weight: 500 !important
+        font-size: 1.5rem !important
+        margin-bottom: 2rem !important
 
 .filters
     width: 100% !important

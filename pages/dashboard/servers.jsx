@@ -13,7 +13,7 @@ import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { apiRequest, setUser } from '../../lib/functions';
 
 import 'chart.js/auto';
-import { Bar } from 'react-chartjs-2';
+import { Line } from 'react-chartjs-2';
 
 export default class extends Component {
     defaultCreateServerModal = {
@@ -78,7 +78,7 @@ export default class extends Component {
             ipServerResponseTimes: ipServers?.map(({ id, response_time }) => {
                 const response_times = this?.state?.ipServerResponseTimes?.find((srt) => srt?.id === id)?.response_times ?? [];
 
-                return { id, response_times: [...(response_times?.length > 15 ? response_times?.splice(1, response_times?.length) : response_times), response_time] };
+                return { id, response_times: [...(response_times?.length > 5 ? response_times?.splice(1, response_times?.length) : response_times), response_time] };
             }),
             servers
         });
@@ -140,10 +140,8 @@ export default class extends Component {
                             labels: this.state.ipServerResponseTimes?.find((srt) => srt?.id === id)?.response_times?.map((r) => `${r}ms`),
                             datasets: [{
                                 label: "Response Time",
-                                innerWidth: .1,
-                                outerWidth: .1,
-                                backgroundColor: this.state.ipServerResponseTimes?.find((srt) => srt?.id === id)?.response_times?.map((r) => r < 1000 ? '#6DFA94' : r < 5000 ? '#e67e22' : '#fa6d6d'),
-                                data: this.state.ipServerResponseTimes?.find((srt) => srt?.id === id)?.response_times
+                                fill: true,
+                                data: this.state.ipServerResponseTimes?.find((srt) => srt?.id === id)?.response_times,
                             }]
                         }} />
                     </div>
@@ -214,17 +212,10 @@ export default class extends Component {
         </div>
     );
 
-    BarChart = ({ data }) => <Bar data={data} options={{
+    BarChart = ({ data }) => <Line data={data} options={{
         plugins: {
             legend: {
                 display: false
-            }
-        },
-        scales: {
-            x: {
-                ticks: {
-                    display: false
-                }
             }
         }
     }} />;
