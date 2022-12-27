@@ -66,7 +66,8 @@ export default async (req, res) => {
             const { error: failedServerCreation } = await insertIntoTable(tables.robloxServers, [
                 { name: 'owner_id', value: user?.id },
                 { name: 'nickname', value: nickname },
-                { name: 'place_id', value: universeId },
+                { name: 'place_id', value: place_id },
+                { name: 'universe_id', value: universeId },
                 { name: 'name', value: gameInfo?.name },
                 { name: 'description', value: gameInfo?.description },
                 { name: 'creator_name', value: gameInfo?.creator_name },
@@ -160,7 +161,8 @@ export default async (req, res) => {
 
             const { error: failedServerUpdate } = await updateInTable(tables.robloxServers, [
                 { name: 'nickname', value: nickname },
-                { name: 'place_id', value: universeId },
+                { name: 'place_id', value: place_id },
+                { name: 'universe_id', value: universeId },
                 { name: 'name', value: gameInfo?.name },
                 { name: 'description', value: gameInfo?.description },
                 { name: 'creator_name', value: gameInfo?.creator_name },

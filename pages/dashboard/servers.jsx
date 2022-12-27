@@ -192,15 +192,19 @@ export default class extends Component {
             sort: (servers) => servers
                 .sort((a, b) => a?.nickname ? a?.nickname?.localeCompare(b?.nickname) : 0)
                 .sort((a) => a?.monitoring ? ['TRUE'].includes(a?.monitoring) && -1 : 0),
-            viewData: ({ id, monitoring, place_id, name, description, creator_name, creator_type, price, copying_allowed, max_players, game_created, game_updated, genre, favorites }) => (
+            viewData: ({ id, monitoring, place_id, universe_id, name, description, creator_name, creator_type, price, copying_allowed, max_players, game_created, game_updated, genre, favorites }) => (
                 <div className={`${styles.list} ${styles.fill}`}>
                      <div className={styles.data}>
                         <p className={styles.label}>Monitoring</p>
                         <p className={`${styles.value} ${styles.highlighted} ${styles[monitoring?.toLowerCase() === 'true' ? 'green' : monitoring?.toLowerCase() === 'false' ? 'red' : 'orange']}`}>{monitoring?.toUpperCase() ?? 'UNFETCHABLE'}</p>
                     </div>
                     <div className={styles.data}>
-                        <p className={styles.label}>Universe ID</p>
+                        <p className={styles.label}>Place ID</p>
                         <p className={styles.value}>{place_id}</p>
+                    </div>
+                    <div className={styles.data}>
+                        <p className={styles.label}>Universe ID</p>
+                        <p className={styles.value}>{universe_id}</p>
                     </div>
                     <div className={styles.data}>
                         <p className={styles.label}>Name</p>
