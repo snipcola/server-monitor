@@ -7,7 +7,7 @@ import Button from '../../components/button.mdx';
 import Alert from '../../components/alert.mdx';
 import Input from '../../components/input.mdx';
 import Modal from '../../components/dashboard/modal.jsx';
-import { faServer as Servers, faSync as Refresh, faSatelliteDish as IpAddress, faQuestionCircle as NoImage, faCircleExclamation as Error, faCheckCircle as Check, faCheck as CheckAlt, faTrashAlt as Delete, faPencil as Edit } from '@fortawesome/free-solid-svg-icons';
+import { faServer as Servers, faGamepad as Roblox, faSync as Refresh, faSatelliteDish as IpAddress, faQuestionCircle as NoImage, faCircleExclamation as Error, faCheckCircle as Check, faCheck as CheckAlt, faTrashAlt as Delete, faPencil as Edit } from '@fortawesome/free-solid-svg-icons';
 import { faLinux as Linux } from '@fortawesome/free-brands-svg-icons';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { apiRequest, setUser } from '../../lib/functions';
@@ -43,6 +43,7 @@ export default class extends Component {
         user: {},
         servers: [],
         ipServerResponseTimes: [],
+        robloxGameStats: [],
         elementsDisabled: false,
         createServerModal: this.defaultCreateServerModal,
         deleteServerModal: this.defaultDeleteServerModal,
@@ -72,13 +73,30 @@ export default class extends Component {
 
     setServers = async () => {
         const ipServers = await new Promise((res) => apiRequest(Links.api.servers.ip, 'GET', null, null, null, (data) => res(data?.servers ?? [])));
-        const servers = [...ipServers];
+        const robloxServers = await new Promise((res) => apiRequest(Links.api.servers.roblox, 'GET', null, null, null, (data) => res(data?.servers ?? [])));
+        const servers = [...ipServers, ...robloxServers];
 
         this.setState({
             ipServerResponseTimes: ipServers?.map(({ id, response_time }) => {
                 const response_times = this?.state?.ipServerResponseTimes?.find((srt) => srt?.id === id)?.response_times ?? [];
 
                 return { id, response_times: [...(response_times?.length > 5 ? response_times?.splice(1, response_times?.length) : response_times), response_time] };
+            }),
+            robloxGameStats: robloxServers?.map(({ id, visits, playing, favorites, likes, dislikes }) => {
+                const _visits = this?.state?.robloxGameStats?.find((v) => v?.id === id)?.visits ?? [];
+                const _playing = this?.state?.robloxGameStats?.find((v) => v?.id === id)?.playing ?? [];
+                const _favorites = this?.state?.robloxGameStats?.find((v) => v?.id === id)?.favorites ?? [];
+                const _likes = this?.state?.robloxGameStats?.find((v) => v?.id === id)?.likes ?? [];
+                const _dislikes = this?.state?.robloxGameStats?.find((v) => v?.id === id)?.dislikes ?? [];
+
+                return {
+                    id,
+                    visits: [...(_visits?.length > 5 ? _visits?.splice(1, _visits?.length) : _visits), visits],
+                    playing: [...(_playing?.length > 5 ? _playing?.splice(1, _playing?.length) : _playing), playing],
+                    favorites: [...(_favorites?.length > 5 ? _favorites?.splice(1, _favorites?.length) : _favorites), favorites],
+                    likes: [...(_likes?.length > 5 ? _likes?.splice(1, _likes?.length) : _likes), likes],
+                    dislikes: [...(_dislikes?.length > 5 ? _dislikes?.splice(1, _dislikes?.length) : _dislikes), dislikes]
+                };
             }),
             servers
         });
@@ -123,16 +141,21 @@ export default class extends Component {
             icon: IpAddress,
             sort: (servers) => servers
                 .sort((a, b) => a?.nickname ? a?.nickname?.localeCompare(b?.nickname) : 0)
-                .sort((a) => a?.status ? ['OFFLINE', 'PENDING'].includes(a?.status) && -1 : 0),
-            viewData: ({ id, ip_address, status }) => (
+                .sort((a) => a?.status ? ['OFFLINE', 'PENDING'].includes(a?.status) && -1 : 0)
+                .sort((a) => a?.monitoring ? ['TRUE'].includes(a?.monitoring) && -1 : 0),
+            viewData: ({ id, monitoring, ip_address, status }) => (
                 <div className={styles.list}>
+                     <div className={styles.data}>
+                        <p className={styles.label}>Monitoring</p>
+                        <p className={`${styles.value} ${styles.highlighted} ${styles[monitoring?.toLowerCase() === 'true' ? 'green' : monitoring?.toLowerCase() === 'false' ? 'red' : 'orange']}`}>{monitoring?.toUpperCase() ?? 'UNFETCHABLE'}</p>
+                    </div>
                     <div className={styles.data}>
                         <p className={styles.label}>IP Address</p>
                         <p className={styles.value}>{ip_address}</p>
                     </div>
                     <div className={styles.data}>
                         <p className={styles.label}>Status</p>
-                        <p className={`${styles.value} ${styles.status} ${styles[status?.toLowerCase()]}`}>{status?.toUpperCase() ?? 'UNFETCHABLE'}</p>
+                        <p className={`${styles.value} ${styles.highlighted} ${styles[status?.toLowerCase() === 'online' ? 'green' : status?.toLowerCase() === 'offline' ? 'red' : 'orange']}`}>{status?.toUpperCase() ?? 'UNFETCHABLE'}</p>
                     </div>
                     <div className={styles.data} style={{ flexDirection: 'column' }}>
                         <p className={styles.label}>Response Time (ms)</p>
@@ -165,9 +188,139 @@ export default class extends Component {
             })
         },
         {
+            type: 'roblox',
             title: 'Roblox Game',
-            icon: NoImage,
-            disabled: true
+            icon: Roblox,
+            sort: (servers) => servers
+                .sort((a, b) => a?.nickname ? a?.nickname?.localeCompare(b?.nickname) : 0)
+                .sort((a) => a?.monitoring ? ['TRUE'].includes(a?.monitoring) && -1 : 0),
+            viewData: ({ id, monitoring, place_id, name, description, creator_name, creator_type, price, copying_allowed, max_players, game_created, game_updated, genre, playing, visits, favorites, likes, dislikes }) => (
+                <div className={`${styles.list} ${styles.fill}`}>
+                     <div className={styles.data}>
+                        <p className={styles.label}>Monitoring</p>
+                        <p className={`${styles.value} ${styles.highlighted} ${styles[monitoring?.toLowerCase() === 'true' ? 'green' : monitoring?.toLowerCase() === 'false' ? 'red' : 'orange']}`}>{monitoring?.toUpperCase() ?? 'UNFETCHABLE'}</p>
+                    </div>
+                    <div className={styles.data}>
+                        <p className={styles.label}>Universe ID</p>
+                        <p className={styles.value}>{place_id}</p>
+                    </div>
+                    <div className={styles.data}>
+                        <p className={styles.label}>Name</p>
+                        <p className={`${styles.value} ${name === 'PENDING' && `${styles.highlighted} ${styles.orange}`}`}>{name}</p>
+                    </div>
+                    <div className={styles.data}>
+                        <p className={styles.label}>Description</p>
+                        <p className={`${styles.value} ${description === 'PENDING' && `${styles.highlighted} ${styles.orange}`}`}>{description}</p>
+                    </div>
+                    <div className={styles.data}>
+                        <p className={styles.label}>Creator Name</p>
+                        <p className={`${styles.value} ${creator_name === 'PENDING' && `${styles.highlighted} ${styles.orange}`}`}>{creator_name}</p>
+                    </div>
+                    <div className={styles.data}>
+                        <p className={styles.label}>Creator Type</p>
+                        <p className={`${styles.value} ${creator_type === 'PENDING' && `${styles.highlighted} ${styles.orange}`}`}>{creator_type}</p>
+                    </div>
+                    <div className={styles.data}>
+                        <p className={styles.label}>Price</p>
+                        <p className={`${styles.value} ${price === 'PENDING' && `${styles.highlighted} ${styles.orange}`}`}>{price}</p>
+                    </div>
+                    <div className={styles.data}>
+                        <p className={styles.label}>Copying Enabled</p>
+                        <p className={`${styles.value} ${copying_allowed === 'PENDING' && `${styles.highlighted} ${styles.orange}`}`}>{copying_allowed}</p>
+                    </div>
+                    <div className={styles.data}>
+                        <p className={styles.label}>Max Players</p>
+                        <p className={`${styles.value} ${max_players === 'PENDING' && `${styles.highlighted} ${styles.orange}`}`}>{max_players}</p>
+                    </div>
+                    <div className={styles.data}>
+                        <p className={styles.label}>Game Created</p>
+                        <p className={`${styles.value} ${game_created === 'PENDING' && `${styles.highlighted} ${styles.orange}`}`}>{game_created}</p>
+                    </div>
+                    <div className={styles.data}>
+                        <p className={styles.label}>Game Updated</p>
+                        <p className={`${styles.value} ${game_updated === 'PENDING' && `${styles.highlighted} ${styles.orange}`}`}>{game_updated}</p>
+                    </div>
+                    <div className={styles.data}>
+                        <p className={styles.label}>Genre</p>
+                        <p className={`${styles.value} ${genre === 'PENDING' && `${styles.highlighted} ${styles.orange}`}`}>{genre}</p>
+                    </div>
+                    <div className={styles.data}>
+                        <div className={styles.barChart}>
+                            <p className={styles.label}>Visits</p>
+                            <this.BarChart data={{
+                                labels: this.state.robloxGameStats?.find((s) => s?.id === id)?.visits?.map((r) => `${r} Visits`),
+                                datasets: [{
+                                    label: "Visits",
+                                    fill: true,
+                                    data: this.state.robloxGameStats?.find((s) => s?.id === id)?.visits,
+                                }]
+                            }} />
+                        </div>
+                        <div className={styles.barChart}>
+                            <p className={styles.label}>Players</p>
+                            <this.BarChart data={{
+                                labels: this.state.robloxGameStats?.find((s) => s?.id === id)?.playing?.map((r) => `${r} Players`),
+                                datasets: [{
+                                    label: "Players",
+                                    fill: true,
+                                    data: this.state.robloxGameStats?.find((s) => s?.id === id)?.playing,
+                                }]
+                            }} />
+                        </div>
+                        <div className={styles.barChart}>
+                            <p className={styles.label}>Favorites</p>
+                            <this.BarChart data={{
+                                labels: this.state.robloxGameStats?.find((s) => s?.id === id)?.favorites?.map((r) => `${r} Favorites`),
+                                datasets: [{
+                                    label: "Favorites",
+                                    fill: true,
+                                    data: this.state.robloxGameStats?.find((s) => s?.id === id)?.favorites,
+                                }]
+                            }} />
+                        </div>
+                    </div>
+                    <div className={styles.data}>
+                        <div className={styles.barChart}>
+                        <p className={styles.label}>Likes</p>
+                            <this.BarChart data={{
+                                labels: this.state.robloxGameStats?.find((s) => s?.id === id)?.likes?.map((r) => `${r} Likes`),
+                                datasets: [{
+                                    label: "Likes",
+                                    fill: true,
+                                    data: this.state.robloxGameStats?.find((s) => s?.id === id)?.likes,
+                                }]
+                            }} />
+                        </div>
+                        <div className={styles.barChart}>
+                            <p className={styles.label}>Dislikes</p>
+                            <this.BarChart data={{
+                                labels: this.state.robloxGameStats?.find((s) => s?.id === id)?.dislikes?.map((r) => `${r} Dislikes`),
+                                datasets: [{
+                                    label: "Dislikes",
+                                    fill: true,
+                                    data: this.state.robloxGameStats?.find((s) => s?.id === id)?.dislikes,
+                                }]
+                            }} />
+                        </div>
+                    </div>
+                </div>
+            ),
+            createContent: (
+                <div className={styles.inputContainer}>
+                    <label className={styles.label}>Place Id</label>
+                    <Input className={styles.input} onChange={this.changeCreateServer} value={this.state.createServerModal?.data?.place_id} placeholder='0123456789' name='place_id' type='text' disabled={this.state.elementsDisabled} />
+                </div>
+            ),
+            apiLink: Links.api.server.roblox,
+            editData: ({ place_id }) => ({
+                elements: { place_id },
+                html: (
+                    <div className={styles.inputContainer}>
+                        <label className={styles.label}>Place Id</label>
+                        <Input className={styles.input} value={place_id} onChange={this.changeEditServer} name='place_id' type='text' />
+                    </div>
+                )
+            })
         },
         {
             title: 'Linux OS',
@@ -194,8 +347,8 @@ export default class extends Component {
         </div>
     );
 
-    Server = ({ icon, id, nickname, viewData, apiLink, editData }) => (
-        <div className={styles.server}>
+    Server = ({ type, icon, id, nickname, viewData, apiLink, editData }) => (
+        <div className={`${styles.server} ${styles[type]}`}>
             <div className={styles.header}>
                 <Icon className={styles.icon} icon={icon} />
                 {nickname}
@@ -228,7 +381,7 @@ export default class extends Component {
 
     render = () => {
         useEffect(() => {
-            const _setServers = setInterval(this.setServers, 2500);
+            const _setServers = setInterval(this.setServers, 5000);
             return () => clearInterval(_setServers);
         }, [this])
 
@@ -316,7 +469,7 @@ export default class extends Component {
                             {<div className={styles.server_list}>
                                 {
                                     (type && sort && viewData && apiLink && editData)
-                                        && sort(servers).map((server) => this.Server({ icon, id: server?.id, nickname: server?.nickname, viewData: viewData(server), apiLink, editData: editData(server) }))
+                                        && sort(servers).map((server) => this.Server({ type, icon, id: server?.id, nickname: server?.nickname, viewData: viewData(server), apiLink, editData: editData(server) }))
                                 }
                             </div>}
                         </div>

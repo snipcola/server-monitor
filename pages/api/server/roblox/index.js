@@ -1,7 +1,7 @@
 const { getCookie } = require('cookies-next');
 
 const { Response } = require('../../../../lib/classes');
-const { getBody, logError, validateIP } = require('../../../../lib/functions');
+const { getBody, logError, getRobloxGameInfo, getRobloxUniverseId } = require('../../../../lib/functions');
 
 const { getServers } = require('../../../../lib/server/functions');
 const { lengths } = require('../../../../lib/user/config');
@@ -25,11 +25,9 @@ export default async (req, res) => {
     switch (method) {
         case 'POST': {
             const auth_token = getCookie('auth_token', { req, res }) ?? '';
-            const { nickname, ip_address } = getBody(req?.body);
+            const { nickname, place_id } = getBody(req?.body);
 
-            const [ ip, port ] = ip_address?.split(':');
-
-            if (!auth_token || !nickname || !ip_address) return response.sendError('Invalid request.'); 
+            if (!auth_token || !nickname || !place_id) return response.sendError('Invalid request.'); 
 
             const { exists: authTokenExists, data: { rows: userRows } } = await selectInTable(tables.users, 'id, subscription', [
                 { name: 'auth_token', value: auth_token }
@@ -44,7 +42,9 @@ export default async (req, res) => {
 
             if (response.hasErrors()) return response.send();
 
-            if (!validateIP(ip, port)) return response.sendError('Invalid Server IP Address.');
+            const universeId = await getRobloxUniverseId(place_id);
+
+            if (!universeId) return response.sendError('Invalid Place Id.');
 
             const serversLimit = lengths.subscription.servers[user?.subscription];
             const servers = await getServers(user?.id);
@@ -52,17 +52,36 @@ export default async (req, res) => {
             if (servers?.length >= serversLimit) return response.sendError('Server limit reached on your account.');
             if (servers?.find((s) => s?.nickname === nickname)) return response.sendError('You already chose that nickname for another server.');
 
-            const { exists: ipAddressExists } = await selectInTable(tables.ipServers, null, [
+            const { exists: placeIdExists } = await selectInTable(tables.robloxServers, null, [
                 { name: 'owner_id', value: user?.id, seperator: 'AND' },
-                { name: 'ip_address', value: ip_address }
+                { name: 'place_id', value: universeId }
             ]);
 
-            if (ipAddressExists) return response.sendError('You already chose that IP Address for another server.');
+            if (placeIdExists) return response.sendError('You already chose that Place Id for another server.');
 
-            const { error: failedServerCreation } = await insertIntoTable(tables.ipServers, [
+            const gameInfo = await getRobloxGameInfo(universeId);
+
+            if (!gameInfo?.success) return response.sendError('Roblox API error, try again.');
+
+            const { error: failedServerCreation } = await insertIntoTable(tables.robloxServers, [
                 { name: 'owner_id', value: user?.id },
                 { name: 'nickname', value: nickname },
-                { name: 'ip_address', value: ip_address }
+                { name: 'place_id', value: universeId },
+                { name: 'name', value: gameInfo?.name },
+                { name: 'description', value: gameInfo?.description },
+                { name: 'creator_name', value: gameInfo?.creator_name },
+                { name: 'creator_type', value: gameInfo?.creator_type },
+                { name: 'price', value: gameInfo?.price },
+                { name: 'copying_allowed', value: gameInfo?.copying_allowed },
+                { name: 'max_players', value: gameInfo?.max_players },
+                { name: 'game_created', value: gameInfo?.game_created },
+                { name: 'game_updated', value: gameInfo?.game_updated },
+                { name: 'genre', value: gameInfo?.genre },
+                { name: 'playing', value: gameInfo?.playing },
+                { name: 'visits', value: gameInfo?.visits },
+                { name: 'favorites', value: gameInfo?.favorites },
+                { name: 'likes', value: gameInfo?.likes },
+                { name: 'dislikes', value: gameInfo?.dislikes }
             ]);
 
             if (failedServerCreation) return response.sendError(logError(failedServerCreation));
@@ -84,14 +103,14 @@ export default async (req, res) => {
 
             const user = userRows[0];
 
-            const { exists: serverExists } = await selectInTable(tables.ipServers, null, [
+            const { exists: serverExists } = await selectInTable(tables.robloxServers, null, [
                 { name: 'id', value: id, seperator: 'AND' },
                 { name: 'owner_id', value: user?.id }
             ]);
 
             if (!serverExists) return response.sendError('Server does not exist.');
 
-            const { error: failedServerDeletion } = await deleteFromTable(tables.ipServers, [
+            const { error: failedServerDeletion } = await deleteFromTable(tables.robloxServers, [
                 { name: 'id', value: id, seperator: 'AND' },
                 { name: 'owner_id', value: user?.id }
             ]);
@@ -103,11 +122,9 @@ export default async (req, res) => {
 
         case 'PUT': {
             const auth_token = getCookie('auth_token', { req, res }) ?? '';
-            const { id, nickname, ip_address } = getBody(req?.body);
+            const { id, nickname, place_id } = getBody(req?.body);
 
-            const [ ip, port ] = ip_address?.split(':');
-
-            if (!auth_token || !id || !nickname || !ip_address) return response.sendError('Invalid request.'); 
+            if (!auth_token || !id || !nickname || !place_id) return response.sendError('Invalid request.'); 
 
             const { exists: authTokenExists, data: { rows: userRows } } = await selectInTable(tables.users, 'id', [
                 { name: 'auth_token', value: auth_token }
@@ -117,7 +134,7 @@ export default async (req, res) => {
 
             const user = userRows[0];
 
-            const { exists: serverExists } = await selectInTable(tables.ipServers, null, [
+            const { exists: serverExists } = await selectInTable(tables.robloxServers, null, [
                 { name: 'id', value: id, seperator: 'AND' },
                 { name: 'owner_id', value: user?.id }
             ]);
@@ -133,11 +150,32 @@ export default async (req, res) => {
 
             if (response.hasErrors()) return response.send();
 
-            if (!validateIP(ip, port)) return response.sendError('Invalid Server IP Address.');
+            const universeId = await getRobloxUniverseId(place_id);
 
-            const { error: failedServerUpdate } = await updateInTable(tables.ipServers, [
+            if (!universeId) return response.sendError('Invalid Place Id.');
+
+            const gameInfo = await getRobloxGameInfo(universeId);
+
+            if (!gameInfo?.success) return response.sendError('Roblox API error, try again.');
+
+            const { error: failedServerUpdate } = await updateInTable(tables.robloxServers, [
                 { name: 'nickname', value: nickname },
-                { name: 'ip_address', value: ip_address }
+                { name: 'place_id', value: universeId },
+                { name: 'name', value: gameInfo?.name },
+                { name: 'description', value: gameInfo?.description },
+                { name: 'creator_name', value: gameInfo?.creator_name },
+                { name: 'creator_type', value: gameInfo?.creator_type },
+                { name: 'price', value: gameInfo?.price },
+                { name: 'copying_allowed', value: gameInfo?.copying_allowed },
+                { name: 'max_players', value: gameInfo?.max_players },
+                { name: 'game_created', value: gameInfo?.game_created },
+                { name: 'game_updated', value: gameInfo?.game_updated },
+                { name: 'genre', value: gameInfo?.genre },
+                { name: 'playing', value: gameInfo?.playing },
+                { name: 'visits', value: gameInfo?.visits },
+                { name: 'favorites', value: gameInfo?.favorites },
+                { name: 'likes', value: gameInfo?.likes },
+                { name: 'dislikes', value: gameInfo?.dislikes }
             ], [
                 { name: 'id', value: id, seperator: 'AND' },
                 { name: 'owner_id', value: user?.id }

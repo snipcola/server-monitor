@@ -25,11 +25,11 @@ export default async (req, res) => {
 
             const user = userRows[0];
             
-            const { data: { rows: serversRows } } = await selectInTable(tables.ipServers, '*', [
+            const { data: { rows: serversRows } } = await selectInTable(tables.robloxServers, '*', [
                 { name: 'owner_id', value: user?.id }
             ]);
 
-            response.addData({ servers: serversRows.map((s) => ({ type: 'ip', ...s })) });
+            response.addData({ servers: serversRows.map((s) => ({ type: 'roblox', ...s })) });
 
             break;
         };

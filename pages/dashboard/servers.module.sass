@@ -104,6 +104,13 @@
 @media (max-width: 1200px)
     .server
         max-width: 100% !important
+        
+        &.roblox .data
+            flex-wrap: wrap !important
+            text-align: center !important
+
+            .barChart
+                margin-left: 0 !important
 
 .deleteButton
     background-color: darken($red, 15%) !important
@@ -137,6 +144,9 @@
                 outline: 1px solid darken($primary, 5%) !important
                 max-width: 21rem
                 width: 100% !important
+
+                &.roblox
+                    max-width: 100% !important
 
                 .buttons
                     justify-content: space-between !important
@@ -176,23 +186,32 @@
                             justify-content: space-between !important
                             padding: .5rem 1rem !important
 
+                            .barChart
+                                width: 100% !important
+                                margin-left: 2rem
+                                
+                                &:first-child
+                                    margin-left: 0 !important
+
                             .value
-                                &.status
+                                margin-left: 1rem !important
+
+                                &.highlighted
                                     border-radius: $border-radius !important
                                     padding: 0 .5rem !important
                                     font-size: .9rem !important
 
-                                &.status.online
+                                &.highlighted.green
                                     background-color: mix($green, $primary, 10%) !important
                                     color: $green !important
                                     outline: 1px solid $green !important
 
-                                &.status.offline
+                                &.highlighted.red
                                     background-color: mix($red, $primary, 10%) !important
                                     color: $red !important
                                     outline: 1px solid $red !important
 
-                                &.status.pending
+                                &.highlighted.orange
                                     background-color: mix($orange, $primary, 10%) !important
                                     color: $orange !important
                                     outline: 1px solid $orange !important
@@ -210,6 +229,7 @@
         color: lighten($primary, 50%) !important
         font-weight: 500 !important
         font-size: 1.5rem !important
+        margin-top: 2rem !important
         margin-bottom: 2rem !important
 
 .filters
