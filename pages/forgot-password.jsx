@@ -8,13 +8,9 @@ import { faCircleExclamation as Error, faCheckCircle as Check } from '@fortaweso
 import Links from '../lib/links.js';
 import { Component, createRef, useEffect } from 'react';
 import NextLink from 'next/link';
-import Captcha from 'react-google-recaptcha';
 import { useRouter } from 'next/router';
 import { publicIpv4 as IPV4 } from 'public-ip';
 import { apiRequest, setUser } from '../lib/functions';
-import { captchaConfig } from '../../config';
-
-const { siteKey } = captchaConfig;
 
 export default class extends Component {
     state = {
@@ -37,7 +33,6 @@ export default class extends Component {
 
     render = () => {
         const router = useRouter();
-        const captchaRef = createRef();
 
         useEffect(async () => router.isReady && this.setState({
             userData: {
@@ -53,11 +48,8 @@ export default class extends Component {
 
             apiRequest(Links.api.forgotPassword, 'DELETE', {
                 ...this.state.userData,
-                captcha: captchaRef.current?.getValue(),
                 ip: this.state.ip
             }, (a) => this.setState(a), 'reset');
-
-            captchaRef.current?.reset();
         };
 
         const change = (e) => {
@@ -80,7 +72,6 @@ export default class extends Component {
                         <Input className={loginStyles.input} value={this.state.userData?.email} name='email' onChange={change} placeholder='Email address' type='email' disabled={this.state.elementsDisabled} />
                         <Input className={loginStyles.input} value={this.state.userData?.password} name='password' onChange={change} placeholder='Desired password' type='password' disabled={this.state.elementsDisabled}  />
                         <Input className={loginStyles.input} value={this.state.userData?.code} name='code' onChange={change} placeholder='Six digit code (123-456)' type='text' disabled={this.state.elementsDisabled}  />
-                        <Captcha className={loginStyles.captcha} ref={captchaRef} sitekey={siteKey} />
                         <div className={loginStyles.buttons}>
                             <Button onClick={submit} label='Reset' variant='primary' disabled={this.state.elementsDisabled}  />
                             <Button label='Login' variant='outline' link={Links.login} disabled={this.state.elementsDisabled}  />

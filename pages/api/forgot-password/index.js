@@ -2,7 +2,7 @@ const { randomUUID } = require('crypto');
 
 const { Response } = require('../../../lib/classes');
 
-const { validateCaptcha, generateRandomNumber, seperateNumber, logError, hashPassword, getBody } = require('../../../lib/functions');
+const { generateRandomNumber, seperateNumber, logError, hashPassword, getBody } = require('../../../lib/functions');
 const { isIPAddress } = require('ip-address-validator');
 
 const { lengths } = require('../../../lib/user/config');
@@ -27,10 +27,9 @@ export default async (req, res) => {
 
     switch (method) {
         case 'POST': {
-            const { email, captcha, ip } = getBody(req?.body);
+            const { email, ip } = getBody(req?.body);
 
             if (!(email && ip)) return response.sendError('Invalid request.');
-            if (!await validateCaptcha(captcha)) return response.sendError('Invalid captcha.');
             if (!isIPAddress(ip)) return response.sendError('Invalid IP Address.');
             
             const { exists: userExists, data: { rows: userRows } } = await selectInTable(tables.users, 'username', [
@@ -65,10 +64,9 @@ export default async (req, res) => {
         };
 
         case 'DELETE': {
-            const { email, password, captcha, code, ip } = getBody(req?.body);
+            const { email, password, code, ip } = getBody(req?.body);
 
             if (!(email && password && code && ip)) return response.sendError('Invalid request.');
-            if (!await validateCaptcha(captcha)) return response.sendError('Invalid captcha.');
             if (!isIPAddress(ip)) return response.sendError('Invalid IP Address.');
             
             const { exists: forgotPasswordExists } = await selectInTable(tables.forgotPasswords, null, [

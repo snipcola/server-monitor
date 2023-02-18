@@ -2,7 +2,7 @@ const { getCookie } = require('cookies-next');
 const { randomUUID } = require('crypto');
 
 const { Response } = require('../../../lib/classes');
-const { validateCaptcha, hashPassword, logError, daysUntil, getBody, getDiscordIdInfo } = require('../../../lib/functions');
+const { hashPassword, logError, daysUntil, getBody, getDiscordIdInfo } = require('../../../lib/functions');
 
 const { sendgridSettings: { emails: { deleted: deletedEmail } } } = require('../../../../config');
 const { sendEmail } = require('../../../lib/sendgrid/functions');
@@ -50,7 +50,7 @@ export default async (req, res) => {
         
         case 'PUT': {
             const auth_token = getCookie('auth_token', { req, res }) ?? '';
-            const { username, current_password, desired_password, captcha } = getBody(req?.body);
+            const { username, current_password, desired_password } = getBody(req?.body);
 
             if (!auth_token || !(username || (current_password && desired_password))) return response.sendError('Invalid request.'); 
 
@@ -82,8 +82,6 @@ export default async (req, res) => {
             };
 
             if (current_password && desired_password) {
-                if (!await validateCaptcha(captcha)) return response.sendError('Invalid captcha.');
-
                 if (!validateLength(desired_password, lengths.password)) response.addError(invalidLength('Password', lengths.password));
                 else if (!validatePassword(desired_password)) response.addError(invalidPassword);
 

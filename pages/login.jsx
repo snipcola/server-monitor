@@ -7,12 +7,8 @@ import Button from '../components/button.mdx';
 import { faCircleExclamation as Error } from '@fortawesome/free-solid-svg-icons';
 import Links from '../lib/links';
 import { createRef, Component } from 'react';
-import Captcha from 'react-google-recaptcha';
 import Router from 'next/router';
 import { apiRequest, setUser } from '../lib/functions';
-import { captchaConfig } from '../../config';
-
-const { siteKey } = captchaConfig;
 
 export default class extends Component {
     state = {
@@ -31,22 +27,17 @@ export default class extends Component {
     });
 
     render = () => {
-        const captchaRef = createRef();
-
         const submit = (e) => {
             e.preventDefault();
     
             apiRequest(Links.api.user.validate, 'POST', {
-                ...this.state.userData,
-                captcha: captchaRef.current?.getValue()
+                ...this.state.userData
             }, (a) => this.setState(a), null, ({ auth_token }) => {
                 if (auth_token) apiRequest(Links.api.user.login, 'POST', {
                     auth_token
                 }, (a) => this.setState(a), null, () => Router.push(Links.dashboard.settings));
             });
-    
-            captchaRef.current?.reset();
-        };
+            };
     
         const change = (e) => {
             const { name, value } = e.target;
@@ -64,7 +55,6 @@ export default class extends Component {
                         </div>
                         <Input className={styles.input} name='login' onChange={change} placeholder='Email/Username' type='email' disabled={this.state.elementsDisabled} />
                         <Input className={styles.input} name='password' onChange={change} placeholder='Password' type='password' disabled={this.state.elementsDisabled} />
-                        <Captcha className={styles.captcha} ref={captchaRef} sitekey={siteKey} />
                         <div className={styles.buttons}>
                             <Button onClick={submit} label='Login' variant='primary' disabled={this.state.elementsDisabled} />
                             <Button label='Register' variant='outline' link={Links.register} disabled={this.state.elementsDisabled} />

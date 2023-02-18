@@ -7,12 +7,8 @@ import { Component, createRef } from 'react';
 import Router from 'next/router';
 import { faCircleExclamation as Error, faCheckCircle as Check, faCheck as CheckAlt, faPencil as Edit, faTrashAlt as Delete, faBiohazard as Danger, faCopy as Copy } from '@fortawesome/free-solid-svg-icons';
 import Modal from '../../components/dashboard/modal.jsx';
-import Captcha from 'react-google-recaptcha';
 import Links from '../../lib/links';
 import { apiRequest, setUser, logout } from '../../lib/functions';
-import { captchaConfig } from '../../../config';
-
-const { siteKey } = captchaConfig;
 
 export default class extends Component {
     defaultChangePasswordModal = {
@@ -53,8 +49,6 @@ export default class extends Component {
     componentDidMount = () => setUser((a) => this.setState(a), Router, Links.login, ({ username, discord_link_key }) => this.setState({ userData: { username, discord_link_key } }));
 
     render = () => {
-        const changePassCaptchaRef = createRef();
-
         const submit = (e) => {
             e.preventDefault();
     
@@ -85,13 +79,10 @@ export default class extends Component {
     
             apiRequest(Links.api.user.default, 'PUT', {
                 ...this.state.changePasswordModal?.data,
-                captcha: changePassCaptchaRef.current?.getValue()
             }, (a) => this.setState({ changePasswordModal: {
                 ...this.state.changePasswordModal,
                 ...a
             } }), 'changed', () => logout(Router), true);
-
-            changePassCaptchaRef.current?.reset();
         };
     
         const change = (e) => {
@@ -138,7 +129,6 @@ export default class extends Component {
                         <label className={styles.label}>Desired Password</label>
                         <Input className={styles.input} onChange={changeChangePassword} value={this.state.changePasswordModal?.data?.desired_password} name='desired_password' type='password' disabled={this.state.changePasswordModal?.elementsDisabled} />
                     </div>
-                    <Captcha ref={changePassCaptchaRef} theme='dark' sitekey={siteKey} />
                     <Alert style={{ display: this.state.changePasswordModal.errors.length == 0 ? 'none' : 'flex' }} variant='danger' icon={Error} label={(
                         <p>
                             The following errors occured:

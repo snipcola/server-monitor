@@ -1,7 +1,7 @@
 const { randomUUID } = require('crypto');
 const { Response } = require('../../../lib/classes');
 
-const { validateCaptcha, logError, hashPassword, getBody } = require('../../../lib/functions');
+const { logError, hashPassword, getBody } = require('../../../lib/functions');
 
 const { tables } = require('../../../lib/mysql/queries');
 const { selectInTable, updateInTable } = require('../../../lib/mysql/functions');
@@ -14,10 +14,9 @@ export default async (req, res) => {
     response.setResponse(res);
 
     if (req?.method === 'POST') {
-        const { login, password, captcha } = getBody(req?.body);
+        const { login, password } = getBody(req?.body);
 
         if (!(login && password)) return response.sendError('Invalid request.'); 
-        if (!await validateCaptcha(captcha)) return response.sendError('Invalid captcha.');
 
         const _login = validateEmail(login) ? 'email' : 'username';
         
