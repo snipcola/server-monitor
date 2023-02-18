@@ -1,0 +1,42 @@
+import styles from './guide.module.sass';
+import Layout from '../../components/layout.jsx';
+import Image from 'next/image';
+
+export const copyToClipboard = (e) => {
+    e?.preventDefault();
+    navigator.clipboard.writeText(e?.target?.innerHTML);
+    alert('Copied text to clipboard.');
+};
+
+<Layout>
+    <div className={styles.text}>
+        <h1>FiveM Connector: Installation Guide</h1>
+        <h3>Last updated 16th January, 2023</h3>
+
+        <h2 className={styles.title}>Step 1:</h2>
+        <p>Download the connector <a class={styles.link} href="/fivem-connector/sm-connector.zip">zip file</a>.</p>
+        <h2 className={styles.title}>Step 2:</h2>
+        <p>Once it's downloaded, extract the zip file.</p>
+        <div className={styles.images}>
+            <Image className={styles.image} src='/guides/fivem-connector/1.png' width={350} height={175} />
+            <Image className={styles.image} src='/guides/fivem-connector/2.png' width={300} height={175} />
+        </div>
+        <h2 className={styles.title}>Step 3:</h2>
+        <p>Once extracted, drag the 'sm-connector' folder into your resources folder.</p>
+        <div className={styles.images}>
+            <Image className={styles.image} src='/guides/fivem-connector/3.png' width={350} height={175} />
+            <Image className={styles.image} src='/guides/fivem-connector/4.png' width={350} height={175} />
+        </div>
+        <h2 className={styles.title}>Step 4:</h2>
+        <p>Run the 'setup.bat' file to make sure everythings installed. Note you will require <a class={styles.link} href="https://nodejs.org/dist/v18.13.0/node-v18.13.0-x64.msi">NodeJS</a>. installed for this.</p>
+        <Image className={styles.image} src='/guides/fivem-connector/5.png' width={500} height={175} />
+        <h2 className={styles.title}>Step 5:</h2>
+        <p>Ensure the 'sm-connector' resource in your server.cfg file.</p>
+        <Image className={styles.image} src='/guides/fivem-connector/6.gif' width={350} height={175} />
+        <h2 className={styles.title}>Step 6:</h2>
+        <p>Check your console for the host, port, and api key and input them into the Server Monitor creation field.</p>
+        <Image className={styles.image} src='/guides/fivem-connector/7.png' width={450} height={175} />
+        <h2 className={styles.title}>Step 7:</h2>
+        <p>The connector is now operational and installation is complete.</p>
+    </div>
+</Layout>

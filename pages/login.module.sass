@@ -1,0 +1,81 @@
+@import '../styles/variables'
+
+@keyframes pattern-animation
+  0%
+    background-position: 0 0
+  100%
+    background-position: 100% 50%
+    
+.container
+    display: flex
+    justify-content: center
+    align-items: center
+    background-image: $pattern
+    background-color: $primary
+    background-size: 125%
+    background-position: center center
+    animation: pattern-animation 60s linear infinite alternate
+    padding: 3.5rem 0
+
+    .content
+        display: block !important
+        background-color: white
+        border: 1px solid silver
+        padding: 1.5rem 2rem !important
+        margin: 1rem
+        border-radius: $border-radius
+        max-width: 20rem !important
+        width: 100%
+        user-select: none
+
+        .discord
+            margin-top: .5rem
+            color: $primary
+            width: 100%
+
+        .buttons
+            margin-top: 1rem
+            display: flex
+
+            button
+                width: 100%
+
+                &:first-child
+                    margin-right: 1rem
+
+        .forgotPasswordButton
+            width: 100%
+            margin-top: .5rem
+            color: $primary
+
+        .input
+            margin-top: .5rem
+
+        .alert
+            margin-top: 1rem
+
+        .link
+            color: white
+
+        .captcha
+            margin-top: 1rem
+            
+            div
+                display: flex
+                margin-left: auto
+                margin-right: auto
+
+        .title
+            text-align: center
+            margin-bottom: .5rem
+
+            .text
+                font-size: 1.5rem
+
+            a
+                text-decoration: none
+                color: $primary
+                transition: opacity .25s
+
+            a:hover
+                opacity: 50%

@@ -1,0 +1,25 @@
+import styles from './guide.module.sass';
+import Layout from '../../components/layout.jsx';
+
+import { config } from '../../../config.js';
+
+export const copyToClipboard = (e) => {
+    e?.preventDefault();
+    navigator.clipboard.writeText(e?.target?.innerHTML);
+    alert('Copied text to clipboard.');
+};
+
+<Layout>
+    <div className={styles.text}>
+        <h1>Linux Connector: Installation Guide</h1>
+        <h3>Last updated 16th January, 2023</h3>
+
+        <h2 className={styles.title}>Step 1:</h2>
+        <p>Run this script in your terminal (click to copy):</p>
+        <p className={styles.code} onClick={copyToClipboard}>curl -s -L {config.domain}/connector/install.sh | bash</p>
+        <h2 className={styles.title}>Step 2:</h2>
+        <p>Once it has installed all dependencies and outputted your API Key, Host, and Port, input that into the Server Monitor creation fields.</p>
+        <h2 className={styles.title}>Step 3:</h2>
+        <p>The connector is now operational and installation is complete.</p>
+    </div>
+</Layout>

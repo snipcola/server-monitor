@@ -1,0 +1,18 @@
+import styles from './footer.module.sass';
+import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
+import { faDiscord as Discord, faTwitter as Twitter, faYoutube as YouTube } from '@fortawesome/free-brands-svg-icons';
+import NextLink from 'next/link';
+import SiteLinks from '../lib/links.js';
+import Container from './container.mdx';
+
+export const Link = ({ icon, link }) => (
+    <NextLink href={link ?? ''}>
+        <button className={styles.link}>
+            <Icon className={styles.icon} icon={icon} />
+        </button>
+    </NextLink>
+);
+
+<Container containerClass={styles.footer}>
+    <h1>Server Monitor - developed by Snipcola#0001</h1>
+</Container>

@@ -1,0 +1,51 @@
+import styles from './index.module.sass';
+import Image from 'next/image';
+import LoginButtons from '../components/loginButtons.mdx';
+import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
+import {
+    faSync as Sync,
+    faShieldAlt as Shield,
+    faServer as Server,
+    faPhone as Phone,
+    faCode as Code,
+    faBolt as Bolt
+} from '@fortawesome/free-solid-svg-icons';
+import Container from '../components/container.mdx';
+import Layout from '../components/layout.jsx';
+
+export const Items = [
+    { title: 'Updates', icon: Sync, description: 'We update our services regularly and strive to provide the best user-experience to the users of our services.' },
+    { title: 'Reliability', icon: Shield, description: 'All confidential information that is stored on our website is protected with multiple methods - such as hashing.' },
+    { title: '24/7 Hosting', icon: Server, description: 'Our services are hosted 24/7 so you don\'t have to worry about any kind of disruptions with server status alerts.' },
+    { title: 'Support', icon: Phone, description: 'Our support representatives are online to provide you with the best experience on our official discord server.' },
+    { title: 'Latest Tech', icon: Code, description: 'Our services and website is written using the latest and greatest technology - helping you achieve maximum productivity.' },
+    { title: 'Blazing Alerts', icon: Bolt, description: 'Our services are able to alert you about any server disruptions within seconds of the event.' }
+];
+
+export const Item = ({ title, icon, description }) => (
+    <div className={styles.item}>
+        <div className={styles.title}>
+            {icon && <Icon className={styles.icon} icon={icon} />}
+            <h1 className={styles.text}>{title}</h1>
+        </div>
+        <p className={styles.description}>{description}</p>
+    </div>
+);
+
+<Layout>
+    <Container containerClass={styles.one} contentClass={styles.content}>
+        <div className={styles.left}>
+            <h1 className={styles.title}>Server Monitor - the best solution to monitor your servers,</h1>
+            <p className={styles.description}>Server Monitor is a service you can use to display the status of your servers, i.e. Minecraft, Web, GTA servers - all you need is the server's IP and you can instantly start getting status updates.</p>
+            <div className={styles.buttons}>
+                <LoginButtons />
+            </div>
+        </div>
+        <Image className={styles.image} src='/home.png' width={1280} height={720} priority  />
+    </Container>
+
+    <Container containerClass={styles.two} contentClass={styles.content}>
+        <h1 className={styles.title}>What we offer</h1>
+        <div className={styles.items}>{Items.map(Item)}</div>
+    </Container>
+</Layout>

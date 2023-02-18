@@ -1,0 +1,7 @@
+import styles from './container.module.sass';
+
+<div className={`${styles.container} ${props.containerClass ?? ''}`}>
+    <div className={`${styles.content} ${props.contentClass ?? ''}`}>
+        {props.children}
+    </div>
+</div>

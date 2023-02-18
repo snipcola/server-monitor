@@ -1,0 +1,114 @@
+@import '../../components/dashboard/variables'
+
+@media screen and (max-width: 1100px)
+    .contentContainer
+        margin-left: 0 !important
+    
+.container
+    display: flex !important
+    margin-top: 1rem !important
+    height: calc(100vh - 8rem) !important
+
+.mainContainer
+    display: flex !important
+
+.contentContainer
+    display: block !important
+    width: 100% !important
+    margin-left: 1rem
+    background-color: lighten($primary, 5%) !important
+    border-radius: $border-radius !important
+    outline: 1px solid darken($primary, 5%) !important
+    overflow-y: scroll !important
+    scroll-behavior: smooth !important
+
+    &::-webkit-scrollbar
+        border-left: 1px solid darken($primary, 5%) !important
+
+    &::-webkit-scrollbar-thumb
+        background-color: $primary !important
+
+    .title
+        padding: .5rem 2rem !important
+        color: lighten($primary, 50%) !important
+        font-weight: bold !important
+        font-size: 1.5rem !important
+
+    .seperator
+        width: 100% !important
+        height: 1px !important
+        background-color: darken($primary, 10%) !important
+        opacity: 50% !important
+
+    .content
+        padding: 1.5rem 2rem !important
+        box-sizing: border-box !important
+
+.button
+    background-color: lighten($primary, 10%) !important
+    color: lighten($primary, 50%) !important
+    outline: 1px solid darken($primary, 5%) !important
+
+    &:hover
+        background-color: lighten($primary, 15%) !important
+
+.buttons
+    display: flex !important
+
+    .deleteButton
+        background-color: darken($red, 15%) !important
+        color: lighten($red, 50%) !important
+        outline: 1px solid darken($red, 15%) !important
+
+        &:hover
+            background-color: darken($red, 20%) !important
+
+    Button
+        margin-right: 1rem !important
+
+        &:last-child
+            margin-right: 0 !important
+
+    .changePasswordButton
+        background-color: darken($green, 40%) !important
+        color: lighten($green, 50%) !important
+        outline: 1px solid darken($green, 40%) !important
+
+        &:hover
+            background-color: darken($green, 45%) !important
+
+.alert
+    margin-top: 1rem !important
+    margin-bottom: 1rem !important
+
+.inputContainer
+    margin-bottom: 1rem !important
+
+    .flex
+        display: flex !important
+        align-items: center !important
+
+    .changePassButton
+        height: 2rem !important
+        width: max-content !important
+        margin-left: 1rem !important
+        max-width: 12rem !important
+        width: 100% !important
+        background-color: mix($green, $primary, 10%) !important
+        color: $green !important
+        outline: 1px solid $green !important
+
+        &:hover
+            background-color: mix($green, $primary, 15%) !important
+
+    .label
+        margin: 0 !important
+        color: lighten($primary, 50%) !important
+
+    .input
+        background-color: lighten($primary, 7%) !important
+        border: 1px solid darken($primary, 5%) !important
+        color: lighten($primary, 50%) !important
+
+        &:hover, &:focus
+            background-color: lighten($primary, 5%) !important

@@ -1,0 +1,48 @@
+@import '../styles/variables'
+
+.footer
+    height: $footer-height
+    background-color: $primary
+    position: absolute
+    bottom: 0
+    color: white
+    user-select: none
+
+    .links
+        display: flex
+        margin-left: auto
+
+        .link
+            border: none
+            outline: none
+            margin-left: 1rem
+            background-color: mix($primary, white, 75%)
+            color: white
+            padding: .5rem
+            border-radius: $border-radius
+            cursor: pointer
+            transition: all .1s
+
+            .icon
+                width: 2rem
+                height: .75rem
+
+            &:hover
+                background-color: mix($primary, white, 65%)
+
+            &:active, &:focus
+                background-color: mix($primary, white, 50%)
+
+            &:first-child
+                margin-left: 0
+
+    h1
+        font-size: 1.25rem
+
+@media (max-width: 600px)
+  .footer
+    h1
+        margin: auto
+
+    .links
+      display: none !important

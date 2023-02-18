@@ -1,0 +1,18 @@
+@import '../styles/variables'
+    
+.container
+    display: flex
+    align-items: center
+    justify-content: center
+    width: 100%
+
+    .content
+        display: flex
+        align-items: center
+        max-width: $max-width
+        padding: $padding
+        width: 100%
+
+@media (max-width: 1000px)
+    .container .content
+        padding: 0 1rem

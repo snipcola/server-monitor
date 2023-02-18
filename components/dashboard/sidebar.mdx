@@ -1,0 +1,46 @@
+import styles from './sidebar.module.sass';
+import Image from 'next/image';
+import NextLink from 'next/link';
+import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
+import { faServer as Server, faCog as Gear, faMoneyBill as MoneyBill, faPaperclip as PaperClip, faRightFromBracket as LogOut, faPlus as Plus } from '@fortawesome/free-solid-svg-icons';
+import links from '../../lib/links.js';
+import Router, { useRouter } from 'next/router';
+import { logout } from '../../lib/functions';
+
+export const Links = [
+    {
+        label: 'SETTINGS',
+        link: links.dashboard.settings,
+        icon: Gear
+    },
+    {
+        label: 'SERVERS',
+        link: links.dashboard.servers,
+        icon: Server
+    }
+];
+
+export const Link = ({ label, link, icon, className, onClick }) => {
+    const router = useRouter();
+
+    return (
+        <NextLink href={link ?? 'javascript:void(0)'}>
+            <a onClick={onClick ?? null} className={`${styles.link} ${router?.pathname === link ? styles.active : ''} ${className ? className : ''}`}>
+                {icon && <Icon className={styles.icon} icon={icon} />}
+                {icon && <div className={styles.linkSeperator} />}
+                <h1 className={styles.label}><h1>{label}</h1></h1>
+            </a>
+        </NextLink>
+    );
+};
+
+export const Logout = () => logout(Router);
+
+<div className={styles.sidebar}>
+    <h1 className={styles.title}>DASHBOARD</h1>
+    <div className={styles.seperator} />
+    <div className={styles.links}>
+        {Links.map(Link)}
+        <Link className={styles.logoutLink} onClick={Logout} label='LOG OUT' icon={LogOut} />
+    </div>
+</div>

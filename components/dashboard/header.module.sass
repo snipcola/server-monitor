@@ -1,0 +1,88 @@
+@import './variables.sass'
+
+.header, .headerMobile
+    width: 100% !important
+    height: $header-height !important
+    background-color: lighten($primary, 5%) !important
+    border-radius: $border-radius !important
+    display: flex !important
+    align-items: center !important
+    padding: 2.5rem 2rem !important
+    box-sizing: border-box !important
+    outline: 1px solid darken($primary, 5%) !important
+
+    .title
+        color: lighten($primary, 50%) !important
+        font-weight: bold !important
+        font-size: 1.5rem !important
+
+        &:hover
+            color: lighten($primary, 60%) !important
+            cursor: pointer !important
+
+    .links
+        display: flex
+        margin-left: 2rem !important
+
+        .link
+            margin-right: 2rem !important
+            color: lighten($primary, 40%) !important
+            font-size: 1.25rem !important
+
+            &:hover
+                color: lighten($primary, 50%) !important
+                cursor: pointer !important
+
+            &:last-child
+                margin-right: 0 !important
+
+    .sidebarButton
+        display: none
+        margin-left: auto !important
+        background-color: lighten($primary, 3%) !important
+        padding: .75rem !important
+        color: lighten($primary, 50%) !important
+        border-radius: $border-radius !important
+        outline: 1px solid darken($primary, 5%) !important
+
+        &:hover
+            background-color: lighten($primary, 5%) !important
+            cursor: pointer !important
+
+        .sidebarIcon
+            width: 1.75rem !important
+            height: 1rem !important
+
+.headerMobile
+    display: none !important
+    padding: 1rem 2.5rem !important
+    position: fixed
+    z-index: 9999
+    margin-top: 1rem
+    height: fit-content !important
+    width: calc(100% - 2rem) !important
+
+    .title
+        &:hover
+            color: lighten($primary, 50%) !important
+            cursor: default !important
+
+        &:first-child
+            margin-top: 0 !important
+
+        margin-top: 1rem !important
+
+    .links
+        margin-left: 0 !important
+        flex-direction: column !important
+
+@media screen and (max-width: 1100px)
+    .header
+        .links
+            display: none !important
+
+        .sidebarButton
+            display: block !important
+
+    .headerMobile
+        display: block !important
